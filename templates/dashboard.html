@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<!-- Dashboard Autor -->
+<div class="px-4 py-5 my-5 text-center border-bottom">
+    <h1 class="display-4 fw-bold text-body-emphasis">Dashboard Autor</h1>
+    <div class="col-lg-6 mx-auto">
+        <p class="lead mb-4">Estatus de {{ dashboard.name }}</p>
+        <div class="d-grid gap-2 d-sm-flex justify-content-sm-center mb-5">
+              <a class="btn btn-primary btn-lg px-4 me-sm-3" href=" {{ url_for('new_article') }} " role="button">Inscribir nuevo artículo</a>
+        </div>
+    </div>
+    <div class="overflow-hidden" style="max-height: 30vh;">
+        <div class="container px-5">
+            <table class="table table-dark table-striped table-hover">
+                <tbody>
+                    {% for i in range(0, 3): %}
+                    <tr>
+                        <th scope="row" class="col-9">{{ dashboard.articles[i] }}</th>
+                        <td>
+                            <button type="button" class="btn btn-danger">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                                    <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"></path>
+                                    <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"></path>
+                                </svg>
+                                Eliminar artículo
+                            </button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<!-- Dashboard Evaluador -->
+<div class="px-4 py-5 my-5 text-center">
+    <h1 class="display-4 fw-bold text-body-emphasis">Dashboard Evaluador</h1>
+    <div class="col-lg-6 mx-auto">
+        <p class="lead mb-4">Estatus de {{ dashboard.name }}</p>
+    </div>
+    <div class="overflow-hidden" style="max-height: 30vh;">
+        <div class="container px-5">
+            <table class="table table-dark table-striped table-hover">
+                <tbody>
+                    {% for i in range(0, 3): %}
+                    <tr>
+                        <th scope="row" class="col-6">{{ dashboard.evaluations[i] }}</th>
+                        <td class="col-3">
+                            Evaluado
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-info">Ver</button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
