@@ -141,3 +141,31 @@ class NewArticleForm(FlaskForm):
         super(NewArticleForm, self).__init__(*args, **kwargs)
         self.category.choices = options["Category"]
 
+
+class EvaluationForm(FlaskForm):
+    evaluationCriteria = ['Criterio #1', 'Criterio #2', 'Criterio #3', 'Criterio #4', 'Criterio #5']
+
+    criterion1 = SelectField('¿Hay claridad en el propósito u objetivo de la investigación o del texto?', coerce=str)
+    criterion2 = SelectField('¿Se presentan datos de forma clara y ordenada, se informa su origen y se evidencia su relación con el texto?', coerce=str)
+    criterion3 = SelectField('En caso de que el texto incluya hipótesis, ¿éstas se encuentran explicitadas de manera clara y articuladas con la introducción y la teoría? ¿Los resultados aportan conceptualización o contribuyen a resolver un problema?', coerce=str)
+    criterion4 = SelectField('¿Hay precisión de las definiciones conceptuales? ¿Se evidencia rigor en la recolección de los datos? (sistematización)', coerce=str)
+    criterion5 = SelectField('¿El articulo sigue el formato APA?', coerce=str)
+
+    evaluation = SelectField('Categoría', coerce=str)
+
+    comments = TextAreaField("Comentarios", [
+        Length(min=0, max=128, message="El comentario debe contener máximo 128 caracteres"),
+    ])
+
+    submit = SubmitField(label="Guardar evaluación")
+
+    def __init__(self, options: dict = None, *args, **kwargs):
+        super(EvaluationForm, self).__init__(*args, **kwargs)
+        self.criterion1.choices = options["Grade"]
+        self.criterion2.choices = options["Grade"]
+        self.criterion3.choices = options["Grade"]
+        self.criterion4.choices = options["Grade"]
+        self.criterion5.choices = options["Grade"]
+
+        self.evaluation.choices = options["Conclusion"]
+

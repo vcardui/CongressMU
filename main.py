@@ -20,7 +20,7 @@
 from flask import Flask, render_template, flash, redirect, url_for
 from flask_bootstrap import Bootstrap5
 
-from form import LogInForm, SignUpForm, NewArticleForm
+from form import LogInForm, SignUpForm, NewArticleForm, EvaluationForm
 from dashboard import Dashboard
 
 # ------------------------- Variables -------------------------
@@ -38,6 +38,11 @@ categoryOptions = {
     "Category": [(0, 'Inclusión'), (1, 'Tecnología educativa'), (2, 'Cloud en en la escuela')]
 }
 
+# Category Options
+evaluationOptions = {
+    "Grade": [(1, ' ★'), (2, '★★'), (3, '★★★'), (4, '★★★★'), (5, '★★★★★')],
+    "Conclusion": [(0, 'Aceptado sin modificaciones'), (1, 'Aceptado con modificaciones básicas'), (2, 'Aceptado con modificaciones básicas y algunas de estructura'), (3, 'Evaluar, reescribir contenidos y presentar a una próxima convocatoria para nueva evaluación'), (4, 'No Aceptado')]
+}
 # ----------------------- Flask routes ------------------------
 @app.route("/", methods=["GET", "POST"])
 def home():
@@ -75,8 +80,18 @@ def new_article():
     if form.validate_on_submit():
         flash(f"Registro exitoso", "success")
         print(form.data)
-        return redirect(url_for('home'))
+        return redirect(url_for('dashboard'))
     return render_template('new_article.html', form=form)
+
+@app.route("/evaluation", methods=["GET", "POST"])
+def evaluation():
+    form = EvaluationForm(evaluationOptions)
+    if form.validate_on_submit():
+        flash(f"Evaluación exitosa", "success")
+        print(form.data)
+        # return redirect(url_for('dashboard'))
+    return render_template('evaluation.html', form=form)
+
 
 if __name__ == '__main__':
     app.run(debug=True)
