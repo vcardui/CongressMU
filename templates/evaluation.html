@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% from 'bootstrap5/form.html' import render_form%}
+
+{% block title %}Evaluación{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12 col-md-8">
+                <h1>Evaluación</h1>
+                <div class="card text-bg-primary my-3" style="width: 18rem;">
+                    <div class="card-header text-center">
+                        {{ "Categoría" }}
+                    </div>
+                </div>
+                <a class="btn btn-info px-4" href=" {{ '#' }} " role="button">Leer artículo</a>
+                <p class="py-3">Se evalúa con escala de 1 al 5, 1 calificación alta, 5 calificación baja</p>
+                {{ render_form(form) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}

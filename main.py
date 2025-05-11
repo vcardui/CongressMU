@@ -92,6 +92,15 @@ def evaluation():
         # return redirect(url_for('dashboard'))
     return render_template('evaluation.html', form=form)
 
+@app.route("/articles_assignment", methods=["GET", "POST"])
+def articles_assignment():
+    form = EvaluationForm(evaluationOptions)
+    if form.validate_on_submit():
+        flash(f"Evaluación exitosa", "success")
+        print(form.data)
+        # return redirect(url_for('dashboard'))
+    return render_template('articles_assignment.html', form=form)
+
 
 if __name__ == '__main__':
     app.run(debug=True)
