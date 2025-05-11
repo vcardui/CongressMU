@@ -169,3 +169,25 @@ class EvaluationForm(FlaskForm):
 
         self.evaluation.choices = options["Conclusion"]
 
+
+class ArticlesAssignmentForm(FlaskForm):
+    title = StringField('Título del artículo', [
+        Length(min=6, max=128, message="El título debe contener entre 12 y 128 caracteres"),
+        InputRequired("Ingrese el título del artículo"),
+        Regexp(
+            regex="^[A-Za-z0-9 áéíóúüñÁÉÍÓÚÜÑàâäæçèéêëîïôœùûüÿÀÂÆÇÈÉÊËÎÏÔŒÙÛÜŸß .&'@#-]+$",
+            message="Eliminar cualquier caracter que no sea alfabético o emoji"
+        )
+    ])
+
+    category = SelectField('Categoría', coerce=str)
+
+    comments = TextAreaField("Comentarios", [
+        Length(min=0, max=128, message="El comentario debe contener máximo 128 caracteres"),
+    ])
+
+    submit = SubmitField(label="Mandar solicitud")
+
+    def __init__(self, options: dict = None, *args, **kwargs):
+        super(ArticlesAssignmentForm, self).__init__(*args, **kwargs)
+        self.category.choices = options["Filters"]
