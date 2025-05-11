@@ -8,7 +8,7 @@
 # +----------------------------------------------------------------------------+
 # | Author.......: Vanessa Reteguín <vanessa@reteguin.com>
 # | First release: May 2nd, 2025
-# | Last update..: May 7th, 2025
+# | Last update..: May 10th, 2025
 # | WhatIs.......: NewMU - Main
 # +----------------------------------------------------------------------------+
 
