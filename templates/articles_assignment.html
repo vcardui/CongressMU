@@ -8,102 +8,122 @@
     <div class="container">
         <div class="row">
             <h1>Asignación de artículos</h1>
-            <form id="contactForm" action="{{ url_for('articles_assignment') }}" method="post">
-                <select class="form-select" aria-label="Default select example">
-                      <option selected>Open this select menu</option>
-                      <option value="1">Disponible</option>
-                      <option value="2">Todos</option>
-                </select>
-                <button class="btn btn-primary" id="submitButton" type="submit">Send</button>
-            </form>
-            <div class="col-sm-6 px-1">
+            <!-- <p>{{ categories }}</p> -->
+            <div class="col-md-6 px-1">
                 <div class="card text-bg-dark border-light mb-3">
-                    <div class="card-header bg-transparent border-light">Evaluadores</div>
-                    <div class="card-body text-light">
-                        <h5 class="card-title">Evaluadores</h5>
-                        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card’s content.</p>
-                        <table class="table table-dark table-striped table-hover">
-                            <thead>
-                                <tr>
-                                    <th scope="col">Nombre</th>
-                                    <th scope="col"># ID</th>
-                                    <th scope="col">Artículo #1</th>
-                                    <th scope="col">Artículo #2</th>
-                                    <th scope="col">Artículo #3</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <th scope="row">Nombre 1 </th>
-                                    <td>ID</td>
-                                    <td>Título 1</td>
-                                    <td>Título 2</td>
-                                    <td>Título 3</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">Nombre 1 </th>
-                                    <td>ID</td>
-                                    <td>Título 1</td>
-                                    <td>Título 2</td>
-                                    <td>Título 3</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">Nombre 1 </th>
-                                    <td>ID</td>
-                                    <td>Título 1</td>
-                                    <td>Título 2</td>
-                                    <td>Título 3</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                    <div class="card-header bg-transparent border-light">
+                        <h3 class="text-center mb-0">Evaluadores</h3>
                     </div>
-                    <div class="card-footer bg-transparent border-light">Footer</div>
+                    <div class="card-body text-light">
+                        <form id="evaluatorsAssignmentForm" action="{{ url_for('articles_assignment') }}" method="post">
+                            <div class="row">
+                                <div class="col-sm-6 p-2">
+                                    <p class="text-center">Cantidad desplegada</p>
+                                    <select class="form-select" aria-label="Default select example">
+                                          <option selected>Todos</option>
+                                          <option value="1">Disponibles</option>
+                                    </select>
+                                </div>
+                                <div class="col-sm-6 p-2">
+                                    <p class="text-center">Categoría</p>
+                                    <select class="form-select">
+                                        {% for i in range(0, categories["EvaluatorCategories"]|length): %}
+                                            {% if i.first%}
+                                        <option selected>{{ categories["EvaluatorCategories"][i][1] }}</option>
+                                            {% else %}
+                                        <option value="1">{{ categories["EvaluatorCategories"][i][1] }}</option>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <button class="btn btn-primary col-2 mx-2" id="evaluatorSubmitButton" type="submit">Filtrar</button>
+                            </div>
+                            <table class="table table-dark table-striped table-hover my-4">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Nombre</th>
+                                        <th scope="col"># ID</th>
+                                        <th scope="col">#1</th>
+                                        <th scope="col">#2</th>
+                                        <th scope="col">#3</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for i in range(0, data["Evaluators"]|length): %}
+                                    <tr>
+                                        <th scope="row" class="col-sm-4">{{ data["Evaluators"][i]["name"] }}</th>
+                                        <td class="col-md-2" >{{ data["Evaluators"][i]["id"] }}</td>
+                                        {% for j in range(0, data["Evaluators"][i]["assignedArticles"]|length): %}
+                                        <td>
+                                            <input type="text" class="form-control col-md-1" id='{{ data["Evaluators"][i]["id"] }}' value='{{ j }}'>
+                                        </td>
+                                        {% endfor %}
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </form>
+                    </div>
                 </div>
             </div>
-            <div class="col-sm-6 px-1">
+            <div class="col-md-6 px-1">
                 <div class="card text-bg-dark border-light mb-3">
-                    <div class="card-header bg-transparent border-light">Artículos</div>
-                    <div class="card-body text-light">
-                        <h5 class="card-title">Artículos</h5>
-                        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card’s content.</p>
-                        <table class="table table-dark table-striped table-hover">
-                            <thead>
-                                <tr>
-                                    <th scope="col">Nombre</th>
-                                    <th scope="col"># ID</th>
-                                    <th scope="col">Artículo #1</th>
-                                    <th scope="col">Artículo #2</th>
-                                    <th scope="col">Artículo #3</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <th scope="row">Nombre 1 </th>
-                                    <td>ID</td>
-                                    <td>Título 1</td>
-                                    <td>Título 2</td>
-                                    <td>Título 3</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">Nombre 1 </th>
-                                    <td>ID</td>
-                                    <td>Título 1</td>
-                                    <td>Título 2</td>
-                                    <td>Título 3</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">Nombre 1 </th>
-                                    <td>ID</td>
-                                    <td>Título 1</td>
-                                    <td>Título 2</td>
-                                    <td>Título 3</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                    <div class="card-header bg-transparent border-light">
+                        <h3 class="text-center mb-0">Artículos</h3>
                     </div>
-                    <div class="card-footer bg-transparent border-light">Footer</div>
+                    <div class="card-body text-light">
+                        <form id="aritclesAssignmentForm" action="{{ url_for('articles_assignment') }}" method="post">
+                            <div class="row">
+                                <div class="col-sm-6 p-2">
+                                    <p class="text-center">Cantidad desplegada</p>
+                                    <select class="form-select" aria-label="Default select example">
+                                          <option selected>Todos</option>
+                                          <option value="1">Disponibles</option>
+                                    </select>
+                                </div>
+                                <div class="col-sm-6 p-2">
+                                    <p class="text-center">Categoría</p>
+                                    <select class="form-select">
+                                        {% for i in range(0, categories["ArticleCategories"]|length): %}
+                                            {% if i.first%}
+                                        <option selected>{{ categories["ArticleCategories"][i][1] }}</option>
+                                            {% else %}
+                                        <option value="1">{{ categories["ArticleCategories"][i][1] }}</option>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <button class="btn btn-primary col-2 mx-2" id="articleSubmitButton" type="submit">Filtrar</button>
+                            </div>
+                            <table class="table table-dark table-striped table-hover my-4">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Nombre</th>
+                                        <th scope="col"># ID</th>
+                                        <th scope="col">#1</th>
+                                        <th scope="col">#2</th>
+                                        <th scope="col">#3</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for i in range(0, data["Articles"]|length): %}
+                                    <tr>
+                                        <th scope="row" class="col-sm-4">{{ data["Articles"][i]["title"] }}</th>
+                                        <td class="col-md-2" >{{ data["Articles"][i]["id"] }}</td>
+                                        {% for j in range(0, data["Articles"][i]["assignedEvaluators"]|length): %}
+                                        <td>
+                                            <input type="text" class="form-control col-md-1" id='{{ data["Articles"][i]["id"] }}' value='{{ j }}'>
+                                        </td>
+                                        {% endfor %}
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </form>
+                    </div>
                 </div>
             </div>
+            <button type="button" class="btn btn-primary btn-lg col-2 mx-auto" id="saveButton">Guardar cambios</button>
         </div>
     </div>
 {% endblock %}

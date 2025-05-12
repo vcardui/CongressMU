@@ -8,7 +8,7 @@
 # +----------------------------------------------------------------------------+
 # | Author.......: Vanessa Reteguín <vanessa@reteguin.com>
 # | First release: May 2nd, 2025
-# | Last update..: May 10th, 2025
+# | Last update..: May 11th, 2025
 # | WhatIs.......: NewMU - Main
 # +----------------------------------------------------------------------------+
 
@@ -17,11 +17,12 @@
 # SweetAlert Js with Flask: https://github.com/elijahondiek/SweetAlert-Js-with-Flask
 
 # ------------------------- Libraries -------------------------
-from flask import Flask, render_template, flash, redirect, url_for
+from flask import Flask, render_template, flash, redirect, url_for, request
 from flask_bootstrap import Bootstrap5
 
 from form import LogInForm, SignUpForm, NewArticleForm, EvaluationForm, ArticlesAssignmentForm
 from dashboard import Dashboard
+
 
 # ------------------------- Variables -------------------------
 app = Flask(__name__)
@@ -45,8 +46,46 @@ evaluationOptions = {
 }
 
 # Articles Assignment Options
-articlesAssignmentOptions = {
-    "Filters": [(1, '--Opción 1--'), (2, '--Opción 2--'), (3, '--Opción 3--')]
+articlesAssignmentCategories = {
+    "EvaluatorCategories": [(0, 'Inclusión'), (1, 'Tecnología educativa'), (2, 'Cloud en en la escuela')],
+    "ArticleCategories": [(0, 'Inclusión'), (1, 'Tecnología educativa'), (2, 'Cloud en en la escuela')]
+}
+
+articlesAssignmentDummy = {
+    "Evaluators": [
+        {
+            "name": "Juan Paco Pedro de la Mar",
+            "id": "FFAA21",
+            "assignedArticles": ["000001", "000002", "000003"]
+        },
+        {
+            "name": "Albert Einstein Energy",
+            "id": "FFAA22",
+            "assignedArticles": ["000001", "000002", "000003"]
+        },
+        {
+            "name": "Marie Curie Poland",
+            "id": "FFAA23",
+            "assignedArticles": ["000001", "000002", "000003"]
+        }
+    ],
+    "Articles": [
+        {
+            "title": "Effects of sleep deprivation on cognitive performance in college students",
+            "id": "FFAA21",
+            "assignedEvaluators": ["000001", "000002", "000003"]
+        },
+        {
+            "title": "Effects of increased carbon dioxide on coral reef ecosystems in the Great Barrier Reef",
+            "id": "FFAA22",
+            "assignedEvaluators": ["000001", "000002", "000003"]
+        },
+        {
+            "title": "Essential Guide to Manuscript Writing for Academic Dummies",
+            "id": "FFAA23",
+            "assignedEvaluators": ["000001", "000002", "000003"]
+        }
+    ]
 }
 
 # ----------------------- Flask routes ------------------------
@@ -100,12 +139,18 @@ def evaluation():
 
 @app.route("/articles_assignment", methods=["GET", "POST"])
 def articles_assignment():
-    form = ArticlesAssignmentForm(articlesAssignmentOptions)
-    if form.validate_on_submit():
-        flash(f"Asignación exitosa", "success")
-        print(form.data)
+    # form = ArticlesAssignmentForm(articlesAssignmentOptions)
+    # if form.validate_on_submit():
+    #    flash(f"Asignación exitosa", "success")
+    #    print(form.data)
         # return redirect(url_for('dashboard'))
-    return render_template('articles_assignment.html', form=form)
+    if request.method == "POST":
+        flash(f"Evaluación exitosa", "success")
+        data = request.values
+        print(data)
+        return render_template('articles_assignment.html', data=articlesAssignmentDummy, categories=articlesAssignmentCategories)
+    else:
+        return render_template('articles_assignment.html', data=articlesAssignmentDummy, categories=articlesAssignmentCategories)
 
 
 if __name__ == '__main__':
