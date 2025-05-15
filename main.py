@@ -21,7 +21,7 @@ from flask import Flask, render_template, flash, redirect, url_for, request
 from flask_bootstrap import Bootstrap5
 from csv import reader, writer
 
-from form import LogInForm, SignUpForm, NewArticleForm, EvaluationForm
+from form import LogInForm, SignUpForm, NewArticleForm, EvaluationForm, FinalEvaluationForm
 from dashboard import Dashboard
 
 
@@ -42,6 +42,13 @@ categoryOptions = {
 
 # Evaluation Options
 evaluationOptions = {
+    "Criteria": [
+        (1, '¿Hay claridad en el propósito u objetivo de la investigación o del texto?'),
+        (2, '¿Se presentan datos de forma clara y ordenada, se informa su origen y se evidencia su relación con el texto?'),
+        (3, 'En caso de que el texto incluya hipótesis, ¿éstas se encuentran explicitadas de manera clara y articuladas con la introducción y la teoría? ¿Los resultados aportan conceptualización o contribuyen a resolver un problema?'),
+        (4, '¿Hay precisión de las definiciones conceptuales? ¿Se evidencia rigor en la recolección de los datos? (sistematización)'),
+        (5, '¿El articulo sigue el formato APA?')
+    ],
     "Grade": [(1, '★'), (2, '★★'), (3, '★★★'), (4, '★★★★'), (5, '★★★★★')],
     "Conclusion": [(0, 'Aceptado sin modificaciones'), (1, 'Aceptado con modificaciones básicas'), (2, 'Aceptado con modificaciones básicas y algunas de estructura'), (3, 'Evaluar, reescribir contenidos y presentar a una próxima convocatoria para nueva evaluación'), (4, 'No Aceptado')]
 }
@@ -124,6 +131,12 @@ articlesAssignmentDummy = [
     }
 ]
 
+FinalEvaluationDummy = [
+    [4, 4, 5, 1, 1],
+    [5, 2, 1, 2, 2],
+    [3, 1, 5, 4, 5]
+]
+
 # ----------------------- Flask routes ------------------------
 @app.route("/", methods=["GET", "POST"])
 def home():
@@ -186,6 +199,16 @@ def articles_assignment():
 @app.route("/articles_catalog", methods=["GET", "POST"])
 def articles_catalog():
     return render_template('articles_catalog.html', data=articlesAssignmentDummy, categories=articlesAssignmentCategories)
+
+@app.route("/final_evaluation", methods=["GET", "POST"])
+def final_evaluation():
+    form = FinalEvaluationForm(evaluationOptions)
+    if form.validate_on_submit():
+        flash(f"Evaluación final exitosa", "success")
+        print(form.data)
+        # return redirect(url_for('dashboard'))
+    return render_template('final_evaluation.html', form=form, criteria=evaluationOptions["Criteria"], partialEvaluation=FinalEvaluationDummy)
+
 
 if __name__ == '__main__':
     app.run(debug=True)

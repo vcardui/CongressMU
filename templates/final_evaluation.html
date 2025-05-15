@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% from 'bootstrap5/form.html' import render_form%}
+
+{% block title %}Evaluación Final{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12 col-md-8">
+                <h1>Evaluación</h1>
+                <div class="card text-bg-primary my-3" style="width: 18rem;">
+                    <div class="card-header text-center">
+                        {{ "Categoría" }}
+                    </div>
+                </div>
+                <a class="btn btn-info px-4" href=" {{ '#' }} " role="button">Leer artículo</a>
+                <div class="card text-bg-dark border-light my-4">
+                    <div class="card-header border-light">
+                        <b>Evaluaciones parciales</b>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-dark table-striped table-hover my-4">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Criterio</th>
+                                    <th scope="col">Evaluador #1</th>
+                                    <th scope="col">Evaluador #2</th>
+                                    <th scope="col">Evaluador #3</th>
+                                    <th scope="col">Promedio</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for i in range(0, criteria|length): %}
+                                <tr>
+                                    <th scope="row" class="col-md-6">{{ criteria[i][1] }}</th>
+                                    <th scope="row" class="">{{ partialEvaluation[0][i] }}</th>
+                                    <th scope="row" class="">{{ partialEvaluation[1][i] }}</th>
+                                    <th scope="row" class="">{{ partialEvaluation[2][i] }}</th>
+                                    <th scope="row" class="">{{ ((partialEvaluation[1][i] + partialEvaluation[1][i] + partialEvaluation[2][i]) / 3) |round(2) }}</th>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                {{ render_form(form) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}
