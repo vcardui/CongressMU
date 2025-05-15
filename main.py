@@ -163,8 +163,16 @@ def sign_up():
         return redirect(url_for('home'))
     return render_template('sign_up.html', form=form)
 
+'''
 @app.route('/<userid>')
 def dashboard(userid):
+    userDashboard = Dashboard(id)
+    return render_template("dashboard.html", dashboard=userDashboard)
+    
+'''
+
+@app.route('/dashboard')
+def dashboard():
     userDashboard = Dashboard(id)
     return render_template("dashboard.html", dashboard=userDashboard)
 
@@ -174,7 +182,7 @@ def new_article():
     if form.validate_on_submit():
         flash(f"Registro exitoso", "success")
         print(form.data)
-        return redirect(url_for('dashboard'))
+        # return redirect(url_for('dashboard'))
     return render_template('new_article.html', form=form)
 
 @app.route("/evaluation", methods=["GET", "POST"])
