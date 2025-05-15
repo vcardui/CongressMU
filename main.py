@@ -9,7 +9,7 @@
 # | Author.......: Vanessa Reteguín <vanessa@reteguin.com>
 # | First release: May 2nd, 2025
 # | Last update..: May 11th, 2025
-# | WhatIs.......: NewMU - Main
+# | WhatIs.......: CongressMU - Main
 # +----------------------------------------------------------------------------+
 
 # ------------ Resources / Documentation involved -------------
@@ -19,8 +19,9 @@
 # ------------------------- Libraries -------------------------
 from flask import Flask, render_template, flash, redirect, url_for, request
 from flask_bootstrap import Bootstrap5
+from csv import reader, writer
 
-from form import LogInForm, SignUpForm, NewArticleForm, EvaluationForm, ArticlesAssignmentForm
+from form import LogInForm, SignUpForm, NewArticleForm, EvaluationForm
 from dashboard import Dashboard
 
 
@@ -88,6 +89,41 @@ articlesAssignmentDummy = {
     ]
 }
 
+# Articles catalog dummy data
+articlesAssignmentDummy = [
+    {
+        "id": "FFAA21",
+        "author": "Juan Paco Pedtro de la mar",
+        "title": "Effects of sleep deprivation on cognitive performance in college students",
+        "category": "Pikachu",
+        "evaluationsGrades": ["4", "3", "5"],
+        "averageGrade": 4,
+        "evaluationStatus": True,
+        "emailSent": False,
+
+    },
+    {
+        "id": "FFAA22",
+        "author": "Paul",
+        "title": "Effects of increased carbon dioxide on coral reef ecosystems in the Great Barrier Reef",
+        "category": "Charmander",
+        "evaluationsGrades": ["4", "3", "5"],
+        "averageGrade": 4,
+        "evaluationStatus": True,
+        "emailSent": True,
+    },
+    {
+        "id": "FFAA23",
+        "author": "Pedro de la mar",
+        "title": "Essential Guide to Manuscript Writing for Academic Dummies",
+        "category": "Squartle",
+        "evaluationsGrades": ["4", "3", "5"],
+        "averageGrade": 4,
+        "evaluationStatus": False,
+        "emailSent": False,
+    }
+]
+
 # ----------------------- Flask routes ------------------------
 @app.route("/", methods=["GET", "POST"])
 def home():
@@ -139,19 +175,17 @@ def evaluation():
 
 @app.route("/articles_assignment", methods=["GET", "POST"])
 def articles_assignment():
-    # form = ArticlesAssignmentForm(articlesAssignmentOptions)
-    # if form.validate_on_submit():
-    #    flash(f"Asignación exitosa", "success")
-    #    print(form.data)
-        # return redirect(url_for('dashboard'))
     if request.method == "POST":
         flash(f"Evaluación exitosa", "success")
-        data = request.values
+        data = request.form
         print(data)
         return render_template('articles_assignment.html', data=articlesAssignmentDummy, categories=articlesAssignmentCategories)
     else:
         return render_template('articles_assignment.html', data=articlesAssignmentDummy, categories=articlesAssignmentCategories)
 
+@app.route("/articles_catalog", methods=["GET", "POST"])
+def articles_catalog():
+    return render_template('articles_catalog.html', data=articlesAssignmentDummy, categories=articlesAssignmentCategories)
 
 if __name__ == '__main__':
     app.run(debug=True)

@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+
+{% from 'bootstrap5/form.html' import render_form%}
+
+{% block title %}Asignación de artículos{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <h1>Catálogo de artículos</h1>
+            <!-- <p>{{ data }}</p> -->
+            <div class="card text-bg-dark border-light">
+                <div class="card-header border-light">
+                    <button type="button" class="btn btn-primary my-2">Mandar correos</button>
+                </div>
+                <div class="card-body">
+                    <table class="table table-dark table-striped table-hover my-4">
+                        <thead>
+                            <tr>
+                                <th scope="col">Nombre</th>
+                                <th scope="col">Título</th>
+                                <th scope="col"># ID</th>
+                                <th scope="col">Categoría</th>
+                                <th scope="col">📝#1</th>
+                                <th scope="col">📝#2</th>
+                                <th scope="col">📝#3</th>
+                                <th scope="col">Promedio</th>
+                                <th scope="col">Estatus</th>
+                                <th scope="col">Correo</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for i in range(0, data|length): %}
+                            <tr>
+                                <th scope="row" class="col-md-1">{{ data[i]["author"] }}</th>
+                                <td class="col-md-3" >{{ data[i]["title"] }}</td>
+                                <td class="col-md-1" ><a href="#" class="btn btn-primary">{{ data[i]["id"] }}</a></td>
+                                <td class="col-md-1" >{{ data[i]["category"] }}</td>
+                                {% for j in range(0, data[i]["evaluationsGrades"]|length): %}
+                                <td class="col-md-1" >{{ data[i]["evaluationsGrades"][j] }}</td>
+                                {% endfor %}
+                                <td class="col-md-1" >{{ data[i]["averageGrade"] }}</td>
+                                {% if data[i]["evaluationStatus"] == true %}
+                                    <td class="col-md-1 text-success no-hover">Aceptado</td>
+                                {% else%}
+                                    <td class="col-md-1 text-danger">No aceptado</td>
+                                {% endif %}
+                                {% if data[i]["emailSent"] == true %}
+                                    <td class="col-md-1 text-success no-hover">Enviado</td>
+                                {% else%}
+                                    <td class="col-md-1 text-danger">No enviado</td>
+                                {% endif %}
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <h1 class="mt-4">Reporte de progreso</h1>
+            <table class="table text-light">
+                <thead>
+                    <tr>
+                        <th scope="col"></th>
+                        <th scope="col">Inclusión</th>
+                        <th scope="col">Tecnología educativa</th>
+                        <th scope="col">Cloud en en la escuela</th>
+                    </tr>
+                </thead>
+                <tbody class="table-group-divider">
+                    <tr>
+                        <th scope="row">📩 Recibidos</th>
+                        <td>Mark</td>
+                        <td>Otto</td>
+                        <td>@mdo</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">✅ Aceptados</th>
+                        <td>Jacob</td>
+                        <td>Thornton</td>
+                        <td>@fat</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">❌ Rechazados</th>
+                        <td>John</td>
+                        <td>Doe</td>
+                        <td>@social</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">📝 Aún no evaliados</th>
+                        <td>John</td>
+                        <td>Doe</td>
+                        <td>@social</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">🤔 Sin veredicto</th>
+                        <td>John</td>
+                        <td>Doe</td>
+                        <td>@social</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}
