@@ -138,12 +138,17 @@ FinalEvaluationDummy = [
 ]
 
 # ----------------------- Flask routes ------------------------
-@app.route("/", methods=["GET", "POST"])
+@app.route("/")
 def home():
+    return render_template("index.html")
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
     form = LogInForm()
     if form.validate_on_submit():
         if form.email.data == "admin@email.com" and form.password.data == "aabb$12345678":
             # flash(f"Bienvenido", "success")
+            print(form.data)
             return redirect(url_for("dashboard", userid=f"{form.email.data}"))
         else:
             print("denied")
@@ -152,7 +157,7 @@ def home():
         pass
         # flash(f"Validación NO exitosa", "error")
 
-    return render_template("index.html", form=form)
+    return render_template("login.html", form=form)
 
 @app.route("/signup", methods=["GET", "POST"])
 def sign_up():

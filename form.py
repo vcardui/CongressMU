@@ -91,7 +91,7 @@ class SignUpForm(FlaskForm):
             regex="^(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,16}$",
             message="La contraseña debe contener: caracteres alfanuméricos, al menos un caracter especial y tener entre 8 y 16 caracteres de longitud."
         ),
-        EqualTo('passwordconfirmation', message='Las contraseñas no coinciden')
+        EqualTo('passwordConfirmation', message='Las contraseñas no coinciden')
     ])
 
     passwordConfirmation = StringField('Confirmación de contraseña')
