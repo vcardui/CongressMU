@@ -8,7 +8,7 @@
 # +----------------------------------------------------------------------------+
 # | Author.......: Vanessa Reteguín <vanessa@reteguin.com>
 # | First release: May 2nd, 2025
-# | Last update..: May 15th, 2025
+# | Last update..: May 16th, 2025
 # | WhatIs.......: CongressMU - Main
 # +----------------------------------------------------------------------------+
 
@@ -17,10 +17,11 @@
 # SweetAlert Js with Flask: https://github.com/elijahondiek/SweetAlert-Js-with-Flask
 
 # ------------------------- Libraries -------------------------
+# Flask imports
 from flask import Flask, render_template, flash, redirect, url_for, request
 from flask_bootstrap import Bootstrap5
-from csv import reader, writer
 
+# Cardui classes
 from form import LogInForm, SignUpForm, NewArticleForm, EvaluationForm, FinalEvaluationForm
 from dashboard import Dashboard
 
@@ -136,6 +137,8 @@ FinalEvaluationDummy = [
     [5, 2, 1, 2, 2],
     [3, 1, 5, 4, 5]
 ]
+
+# ----------------------- Database ------------------------
 
 # ----------------------- Flask routes ------------------------
 @app.route("/")
