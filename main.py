@@ -8,7 +8,7 @@
 # +----------------------------------------------------------------------------+
 # | Author.......: Vanessa Reteguín <vanessa@reteguin.com>
 # | First release: May 2nd, 2025
-# | Last update..: May 16th, 2025
+# | Last update..: May 19th, 2025
 # | WhatIs.......: CongressMU - Main
 # +----------------------------------------------------------------------------+
 
