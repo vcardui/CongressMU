@@ -3,11 +3,11 @@
 {% block content %}
 
     <!-- Dashboard Autor -->
-    <h1 class="display-4 fw-bold text-body-emphasis">Autor</h1>
-    <div class="col-lg-6 mx-auto">
+    <h1 class="display-4 fw-bold text-body-emphasis text-center">Autor</h1>
+    <div class="col-lg-6 mx-auto text-center">
         <p class="lead mb-4">Estatus de {{ dashboard.name }}</p>
     </div>
-    <div class="card text-bg-dark border-light">
+    <div class="card text-bg-dark border-light text-center">
         <div class="card-header border-light">
             <a class="btn btn-primary btn-lg px-4 my-2 me-sm-3" href=" {{ url_for('new_article') }} " role="button">Inscribir nuevo artículo</a>
         </div>
@@ -27,11 +27,11 @@
         </div>
     </div>
     <!-- Dashboard Evaluador -->
-    <h1 class="display-4 fw-bold text-body-emphasis mt-5 pt-5">Evaluador</h1>
-    <div class="col-lg-6 mx-auto">
+    <h1 class="display-4 fw-bold text-body-emphasis mt-5 pt-5 text-center">Evaluador</h1>
+    <div class="col-lg-6 mx-auto text-center">
         <p class="lead mb-4">Estatus de {{ dashboard.name }}</p>
     </div>
-    <div class="card text-bg-dark border-light">
+    <div class="card text-bg-dark border-light text-center">
         <div class="card-body">
             <table class="table table-dark table-striped table-hover mt-3">
                 <tbody> {% for i in range(0, 3): %} <tr>

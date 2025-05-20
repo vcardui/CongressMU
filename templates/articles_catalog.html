@@ -5,7 +5,7 @@
 {% block title %}Asignación de artículos{% endblock %}
 
 {% block content %}
-    <div class="container">
+    <div class="container text-center">
         <div class="row">
             <h1 class="display-4 fw-bold text-body-emphasis pb-4">Catálogo de artículos</h1>
             <!-- <p>{{ data }}</p> -->
@@ -37,7 +37,7 @@
                             <tr>
                                 <th scope="row" class="col-md-1">{{ data[i]["author"] }}</th>
                                 <td class="col-md-3" >{{ data[i]["title"] }}</td>
-                                <td class="col-md-1" ><a href="#" class="btn btn-primary">{{ data[i]["id"] }}</a></td>
+                                <td class="col-md-1" ><a href=" {{ url_for('final_evaluation') }} " class="btn btn-primary">{{ data[i]["id"] }}</a></td>
                                 <td class="col-md-1" >{{ data[i]["category"] }}</td>
                                 {% for j in range(0, data[i]["evaluationsGrades"]|length): %}
                                 <td class="col-md-1" >{{ data[i]["evaluationsGrades"][j] }}</td>
