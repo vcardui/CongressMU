@@ -5,12 +5,10 @@
 {% block title %}Nuevo artículo{% endblock %}
 
 {% block content %}
-    <div class="container">
-        <div class="row">
-            <div class="col-sm-12 col-md-8">
-                <h1>Regístre un nuevo artículo</h1>
-                {{ render_form(form)}}
-            </div>
+    <div class="container h-100 d-flex justify-content-center align-items-center">
+        <div class="row col-md-8">
+            <h1 class="display-4 fw-bold text-body-emphasis text-center">Nuevo artículo</h1>
+            {{ render_form(form)}}
         </div>
     </div>
 {% endblock %}

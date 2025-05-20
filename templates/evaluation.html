@@ -5,18 +5,15 @@
 {% block title %}Evaluación{% endblock %}
 
 {% block content %}
-    <div class="container">
-        <div class="row">
-            <div class="col-sm-12 col-md-8">
-                <h1 class="display-4 fw-bold text-body-emphasis text-center pb-3">Evaluación</h1>
-                <h2 class="display-6 fw-bold text-body-emphasis text-center pb-0">Título del artículo</h2>
-                <div class="row justify-content-center">
-                    <a class="btn btn-primary btn-md rounded-pill m-3 active" style="width: 200px" role="button">Categoría</a>
-                    <a class="btn btn-info btn-md rounded-pill m-3" style="width: 200px" href=" {{ '' }} " role="button">Leer artículo</a>
-                </div>
-                <p class="py-3">Se evalúa con escala de 1 al 5, 1 calificación alta, 5 calificación baja</p>
-                {{ render_form(form) }}
+    <div class="container h-100 d-flex justify-content-center align-items-center">
+        <div class="row col-md-8">
+            <h1 class="display-4 fw-bold text-body-emphasis text-center pb-3">Evaluación</h1>
+            <h2 class="display-6 fw-bold text-body-emphasis text-center pb-0">Título del artículo</h2>
+            <div class="row justify-content-center mb-3">
+                <a class="btn btn-primary btn-md rounded-pill m-3 active" style="width: 200px" role="button">Categoría</a>
+                <a class="btn btn-info btn-md rounded-pill m-3" style="width: 200px" href=" {{ '' }} " role="button">Leer artículo</a>
             </div>
+            {{ render_form(form)}}
         </div>
     </div>
 {% endblock %}
