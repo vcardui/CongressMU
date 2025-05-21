@@ -8,7 +8,7 @@
 # +----------------------------------------------------------------------------+
 # | Author.......: Vanessa Reteguín <vanessa@reteguin.com>
 # | First release: May 2nd, 2025
-# | Last update..: May 19th, 2025
+# | Last update..: May 20th, 2025
 # | WhatIs.......: CongressMU - Main
 # +----------------------------------------------------------------------------+
 
@@ -18,8 +18,11 @@
 
 # ------------------------- Libraries -------------------------
 # Flask imports
-from flask import Flask, render_template, flash, redirect, url_for, request
+from flask import Flask, render_template, flash, redirect, url_for, request, jsonify
 from flask_bootstrap import Bootstrap5
+
+# Integrate MariaDB to app
+import MySQLdb
 
 # Cardui classes
 from form import LogInForm, SignUpForm, NewArticleForm, EvaluationForm, FinalEvaluationForm
@@ -30,6 +33,20 @@ from dashboard import Dashboard
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '8BYkEfBA6O6donzWlSihBXox7C0sKR6b'
 Bootstrap5(app)
+
+# Database configuration
+app.config['MYSQL_HOST'] = 'localhost'
+app.config['MYSQL_USER'] = 'root'
+app.config['MYSQL_PASSWORD'] = '97cb42K3a8yef!ds)/6#)VQV'
+app.config['MYSQL_DB'] = 'flask_db'
+
+# Initialize MySQL
+mysql = MySQLdb.connect(host=app.config['MYSQL_HOST'],
+                        user=app.config['MYSQL_USER'],
+                        passwd=app.config['MYSQL_PASSWORD'],
+                        db=app.config['MYSQL_DB'])
+
+cursor = mysql.cursor()
 
 # Title Options
 titleOptions = {
@@ -139,6 +156,7 @@ FinalEvaluationDummy = [
 ]
 
 # ----------------------- Database ------------------------
+
 
 # ----------------------- Flask routes ------------------------
 @app.route("/")

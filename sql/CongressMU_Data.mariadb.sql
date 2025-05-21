@@ -33,7 +33,7 @@ VALUES
         'Cardui',
         'Bot',
         'carduibot@gmail.com',
-        '',
+        NULL,
         '11111101000'
     );
 

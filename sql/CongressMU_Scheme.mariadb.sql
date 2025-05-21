@@ -15,6 +15,17 @@
 --
 --
 --
+-- DROP TABLE IF EXISTS mucpartialevaluationarticle;
+-- DROP TABLE IF EXISTS mucuserarticle;
+-- DROP TABLE IF EXISTS mucarticle;
+-- DROP TABLE IF EXISTS partialevaluationquestion;
+-- DROP TABLE IF EXISTS partialevaluation;
+-- DROP TABLE IF EXISTS evaluationquestion;
+-- DROP TABLE IF EXISTS question;
+-- DROP TABLE IF EXISTS mucuser;
+--
+--
+--
 -- DROP TABLE IF EXISTS mucuser;
 CREATE TABLE
     mucuser (
@@ -50,18 +61,16 @@ SET
 
 
 
--- DROP TABLE IF EXISTS evaluatedquestion;
+-- DROP TABLE IF EXISTS evaluationquestion;
 CREATE TABLE
-    evaluatedquestion (
+    evaluationquestion (
         idevaluationquestion INT UNSIGNED NOT NULL AUTO_INCREMENT UNIQUE,
         --
         idquestion INT UNSIGNED NOT NULL,
         score TINYINT UNSIGNED,
-        idpartialevaluation INT UNSIGNED NOT NULL,
         --
         PRIMARY KEY (idevaluationquestion),
-        FOREIGN KEY (idquestion) REFERENCES question (idquestion),
-        FOREIGN KEY (idpartialevaluation) REFERENCES partialevaluation (idpartialevaluation)
+        FOREIGN KEY (idquestion) REFERENCES question (idquestion)
     ) ENGINE = InnoDB DEFAULT CHARACTER
 SET
     = utf8;
@@ -75,7 +84,6 @@ CREATE TABLE
         --
         evaluator INT UNSIGNED NOT NULL,
         --
-        idevaluationquestion INT UNSIGNED NOT NULL,
         meanscore FLOAT DEFAULT 0,
         resolution ENUM (
             'accepted-no-modifications',
@@ -87,8 +95,23 @@ CREATE TABLE
         evaluationcomment VARCHAR(128),
         --
         PRIMARY KEY (idpartialevaluation),
-        FOREIGN KEY (evaluator) REFERENCES mucuser (idmucuser),
-        FOREIGN KEY (idevaluationquestion) REFERENCES evaluationquestion (idevaluationquestion)
+        FOREIGN KEY (evaluator) REFERENCES mucuser (idmucuser)
+    ) ENGINE = InnoDB DEFAULT CHARACTER
+SET
+    = utf8;
+
+
+
+-- DROP TABLE IF EXISTS partialevaluationquestion;
+CREATE TABLE
+    partialevaluationquestion (
+        idevaluationquestion INT UNSIGNED NOT NULL,
+        --
+        idpartialevaluation INT UNSIGNED NOT NULL,
+        --
+        UNIQUE KEY (idevaluationquestion, idpartialevaluation),
+        FOREIGN KEY (idevaluationquestion) REFERENCES evaluationquestion (idevaluationquestion),
+        FOREIGN KEY (idpartialevaluation) REFERENCES partialevaluation (idpartialevaluation)
     ) ENGINE = InnoDB DEFAULT CHARACTER
 SET
     = utf8;
@@ -137,22 +160,6 @@ CREATE TABLE
         UNIQUE KEY (idmucuser, idmucarticle),
         FOREIGN KEY (idmucuser) REFERENCES mucuser (idmucuser),
         FOREIGN KEY (idmucarticle) REFERENCES mucarticle (idmucarticle)
-    ) ENGINE = InnoDB DEFAULT CHARACTER
-SET
-    = utf8;
-
-
-
--- DROP TABLE IF EXISTS partialevaluationquestion;
-CREATE TABLE
-    partialevaluationquestion (
-        idevaluationquestion INT UNSIGNED NOT NULL,
-        --
-        idpartialevaluation INT UNSIGNED NOT NULL,
-        --
-        UNIQUE KEY (idevaluationquestion, idpartialevaluation),
-        FOREIGN KEY (idevaluationquestion) REFERENCES evaluationquestion (idevaluationquestion),
-        FOREIGN KEY (idpartialevaluation) REFERENCES partialevaluation (idpartialevaluation)
     ) ENGINE = InnoDB DEFAULT CHARACTER
 SET
     = utf8;
