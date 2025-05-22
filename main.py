@@ -193,6 +193,16 @@ def login():
     form = LogInForm()
     if form.validate_on_submit():
         if form.email.data == "admin@email.com" and form.password.data == "aabb$12345678":
+            cursor.execute(f"SELECT * FROM mucuser WHERE userlogin = '{form.data['email']}'")
+            result = cursor.fetchall()
+
+            if result == ():
+                pass
+            else:
+                flash(f"Este usuario no existe. Favor de registrarse", "error")
+
+            print(result)
+
             # flash(f"Bienvenido", "success")
             print(form.data)
             return redirect(url_for("dashboard", userid=f"{form.email.data}"))
