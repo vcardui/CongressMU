@@ -15,14 +15,16 @@
 --
 --
 --
--- DROP TABLE IF EXISTS mucpartialevaluationarticle;
--- DROP TABLE IF EXISTS mucuserarticle;
--- DROP TABLE IF EXISTS mucarticle;
--- DROP TABLE IF EXISTS partialevaluationquestion;
--- DROP TABLE IF EXISTS partialevaluation;
--- DROP TABLE IF EXISTS evaluationquestion;
--- DROP TABLE IF EXISTS question;
--- DROP TABLE IF EXISTS mucuser;
+/*
+DROP TABLE IF EXISTS mucpartialevaluationarticle;
+DROP TABLE IF EXISTS mucuserarticle;
+DROP TABLE IF EXISTS mucarticle;
+DROP TABLE IF EXISTS partialevaluationquestion;
+DROP TABLE IF EXISTS partialevaluation;
+DROP TABLE IF EXISTS evaluationquestion;
+DROP TABLE IF EXISTS question;
+DROP TABLE IF EXISTS mucuser;
+ */
 --
 --
 --
@@ -32,7 +34,8 @@ CREATE TABLE
         idmucuser INT UNSIGNED NOT NULL AUTO_INCREMENT UNIQUE,
         --
         userlogin VARCHAR(64) UNIQUE NOT NULL,
-        userpassword VARCHAR(96) NOT NULL,
+        userhash VARCHAR(255) NOT NULL,
+        usersalt VARCHAR(255) NOT NULL,
         --
         firstname VARCHAR(64) NOT NULL,
         lastName VARCHAR(64) NOT NULL,

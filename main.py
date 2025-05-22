@@ -23,6 +23,10 @@ from flask_bootstrap import Bootstrap5
 
 # Integrate MariaDB to app
 import MySQLdb
+import mariadb
+
+# Hashing
+import bcrypt
 
 # Cardui classes
 from form import LogInForm, SignUpForm, NewArticleForm, EvaluationForm, FinalEvaluationForm
@@ -33,20 +37,6 @@ from dashboard import Dashboard
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '8BYkEfBA6O6donzWlSihBXox7C0sKR6b'
 Bootstrap5(app)
-
-# Database configuration
-app.config['MYSQL_HOST'] = 'localhost'
-app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = '97cb42K3a8yef!ds)/6#)VQV'
-app.config['MYSQL_DB'] = 'flask_db'
-
-# Initialize MySQL
-mysql = MySQLdb.connect(host=app.config['MYSQL_HOST'],
-                        user=app.config['MYSQL_USER'],
-                        passwd=app.config['MYSQL_PASSWORD'],
-                        db=app.config['MYSQL_DB'])
-
-cursor = mysql.cursor()
 
 # Title Options
 titleOptions = {
@@ -155,8 +145,41 @@ FinalEvaluationDummy = [
     [3, 1, 5, 4, 5]
 ]
 
-# ----------------------- Database ------------------------
+# ----------------------- Hashing -------------------------
+def hash_password_bcrypt(password, salt):
+    hashed_password = bcrypt.hashpw(password.encode('utf-8'), salt)
+    return hashed_password
 
+def verify_password_bcrypt(entered_password, stored_hash):
+    return bcrypt.checkpw(entered_password.encode('utf-8'), stored_hash)
+
+# ----------------------- Database ------------------------
+# Database configuration
+app.config['MYSQL_HOST'] = 'localhost'
+app.config['MYSQL_USER'] = 'root'
+app.config['MYSQL_PASSWORD'] = '97cb42K3a8yef!ds)/6#)VQV'
+app.config['MYSQL_DB'] = 'flask_db'
+
+# Initialize MySQL
+mysql = MySQLdb.connect(host=app.config['MYSQL_HOST'],
+                        user=app.config['MYSQL_USER'],
+                        passwd=app.config['MYSQL_PASSWORD'],
+                        db=app.config['MYSQL_DB'])
+
+cursor = mysql.cursor()
+
+# cursor.execute("SHOW TABLES")
+# result = cursor.fetchall()
+# print(result)
+
+def db_insert(mysql, insertCmd):
+    try:
+        cursor.execute(insertCmd)
+        mysql.commit()
+        return True
+    except Exception as e:
+        print("Problem inserting into db: " + str(e))
+        return False
 
 # ----------------------- Flask routes ------------------------
 @app.route("/")
@@ -184,9 +207,46 @@ def login():
 def sign_up():
     form = SignUpForm(titleOptions)
     if form.validate_on_submit():
-        flash(f"Registro exitoso", "success")
-        print(form.data)
-        return redirect(url_for('home'))
+        cursor.execute(f"SELECT * FROM mucuser WHERE userlogin = '{form.data['email']}'")
+        result = cursor.fetchall()
+
+        if result == ():
+            userSalt = bcrypt.gensalt()
+            userHash = hash_password_bcrypt(form.data['password'], userSalt)
+
+            print(f"userSalt = {type(userSalt)}")
+            print(f"userHash = {type(userHash)}")
+
+            db_insert(mysql, f"""
+                        INSERT INTO
+                            mucuser (userlogin, userhash, usersalt, firstname, lastName, email, title, specialty)
+                        SELECT
+                            '{form.data['email']}',
+                            'userHash',
+                            'userSalt',
+                            '{form.data['name']}',
+                            '{form.data['fathersName']} {form.data['mothersName']}',
+                            '{form.data['email']}',
+                            '{form.data['title']}',
+                            '{form.data['specialty']}'
+                        FROM
+                            DUAL
+                        WHERE
+                            NOT EXISTS (
+                                SELECT
+                                    *
+                                FROM
+                                    mucuser
+                                WHERE
+                                    userlogin = '{form.data['email']}'
+                            )
+                    """)
+            flash(f"Registro exitoso", "success")
+        else:
+            flash(f"El usuario ingresado ya existe", "error")
+
+        # return redirect(url_for('home'))
+        # return redirect(url_for('sign_up'))
     return render_template('sign_up.html', form=form)
 
 '''
