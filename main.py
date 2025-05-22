@@ -15,6 +15,8 @@
 # ------------ Resources / Documentation involved -------------
 # Jinja Expressions: https://jinja.palletsprojects.com/en/stable/templates/#jinja-filters.length
 # SweetAlert Js with Flask: https://github.com/elijahondiek/SweetAlert-Js-with-Flask
+# How to connect Python programs to MariaDB: https://mariadb.com/resources/blog/how-to-connect-python-programs-to-mariadb/
+# Flask with MariaDB: A Comprehensive Guide: https://readmedium.com/flask-with-mariadb-a-comprehensive-guide-0be504b0970f
 
 # ------------------------- Libraries -------------------------
 # Flask imports
@@ -214,16 +216,16 @@ def sign_up():
             userSalt = bcrypt.gensalt()
             userHash = hash_password_bcrypt(form.data['password'], userSalt)
 
-            print(f"userSalt = {type(userSalt)}")
-            print(f"userHash = {type(userHash)}")
+            userSalt_str = userSalt.decode('utf-8')
+            userHash_str = userHash.decode('utf-8')
 
-            db_insert(mysql, f"""
+            if db_insert(mysql, f"""
                         INSERT INTO
                             mucuser (userlogin, userhash, usersalt, firstname, lastName, email, title, specialty)
                         SELECT
                             '{form.data['email']}',
-                            'userHash',
-                            'userSalt',
+                            '{userHash_str}',
+                            '{userSalt_str}',
                             '{form.data['name']}',
                             '{form.data['fathersName']} {form.data['mothersName']}',
                             '{form.data['email']}',
@@ -240,8 +242,10 @@ def sign_up():
                                 WHERE
                                     userlogin = '{form.data['email']}'
                             )
-                    """)
-            flash(f"Registro exitoso", "success")
+                    """):
+                    flash(f"Registro exitoso", "success")
+            else:
+                flash(f"Problema para insertar en la base de datos", "error")
         else:
             flash(f"El usuario ingresado ya existe", "error")
 
