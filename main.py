@@ -192,20 +192,28 @@ def home():
 def login():
     form = LogInForm()
     if form.validate_on_submit():
-        if form.email.data == "admin@email.com" and form.password.data == "aabb$12345678":
+        if form.email.data == "vanessa1@reteguin.com" and form.password.data == "aabb$12345678":
             cursor.execute(f"SELECT * FROM mucuser WHERE userlogin = '{form.data['email']}'")
             result = cursor.fetchall()
+            # print(f"This is the result: {result}")
 
             if result == ():
-                pass
-            else:
                 flash(f"Este usuario no existe. Favor de registrarse", "error")
+            else:
+                cursor.execute(f"SELECT userhash, usersalt FROM mucuser WHERE userlogin = '{form.data['email']}'")
+                userKey = cursor.fetchall()
+                userhash = userKey[0][0].encode(encoding="utf-8")
 
-            print(result)
+                test = verify_password_bcrypt(form.data['password'], userhash)
+                print(test)
+
+                flash(f"Bienvenido", "success")
+                # return redirect(url_for("dashboard", userid=f"{form.email.data}"))
+
 
             # flash(f"Bienvenido", "success")
-            print(form.data)
-            return redirect(url_for("dashboard", userid=f"{form.email.data}"))
+            # print(form.data)
+            # return redirect(url_for("dashboard", userid=f"{form.email.data}"))
         else:
             print("denied")
             flash(f"Credenciales incorrectas", "error")

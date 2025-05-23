@@ -35,7 +35,6 @@ CREATE TABLE
         --
         userlogin VARCHAR(64) UNIQUE NOT NULL,
         userhash VARCHAR(255) NOT NULL,
-        usersalt VARCHAR(255) NOT NULL,
         --
         firstname VARCHAR(64) NOT NULL,
         lastName VARCHAR(64) NOT NULL,
