@@ -17,11 +17,13 @@
 # SweetAlert Js with Flask: https://github.com/elijahondiek/SweetAlert-Js-with-Flask
 # How to connect Python programs to MariaDB: https://mariadb.com/resources/blog/how-to-connect-python-programs-to-mariadb/
 # Flask with MariaDB: A Comprehensive Guide: https://readmedium.com/flask-with-mariadb-a-comprehensive-guide-0be504b0970f
+# How to use Flask-Session in Python Flask: https://www.geeksforgeeks.org/how-to-use-flask-session-in-python-flask/
 
 # ------------------------- Libraries -------------------------
 # Flask imports
-from flask import Flask, render_template, flash, redirect, url_for, request, jsonify
+from flask import Flask, render_template, flash, redirect, url_for, request, session, jsonify
 from flask_bootstrap import Bootstrap5
+from flask_session import Session
 
 # Integrate MariaDB to app
 import MySQLdb
@@ -35,14 +37,24 @@ from form import LogInForm, SignUpForm, NewArticleForm, EvaluationForm, FinalEva
 from dashboard import Dashboard
 
 
-# ------------------------- Variables -------------------------
+# ------------------------- App configuration -------------------------
+
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '8BYkEfBA6O6donzWlSihBXox7C0sKR6b'
 Bootstrap5(app)
 
+# ----------------------- Flask sessions ------------------------
+
+app.config["SESSION_PERMANENT"] = False       # Sessions expire when the browser is closed
+app.config["SESSION_TYPE"] = "filesystem"     # Store session data in files
+
+# Start Flask-Session
+Session(app)
+
+# ------------------------- Variables -------------------------
 # Title Options
 titleOptions = {
-    "Title": [(0, 'Ninguno'), (1, 'Ing.'), (2, 'Lic.'), (3, 'Mtr.'), (4, 'Phd.')]
+    "Title": [(0, ''), (1, 'Lic.'), (2, 'Ing.'), (3, 'Mtr.'), (4, 'Phd.')]
 }
 
 # Category Options
@@ -192,31 +204,24 @@ def home():
 def login():
     form = LogInForm()
     if form.validate_on_submit():
-        if form.email.data == "vanessa1@reteguin.com" and form.password.data == "aabb$12345678":
-            cursor.execute(f"SELECT * FROM mucuser WHERE userlogin = '{form.data['email']}'")
-            result = cursor.fetchall()
-            # print(f"This is the result: {result}")
+        cursor.execute(f"SELECT * FROM mucuser WHERE userlogin = '{form.data['email']}'")
+        result = cursor.fetchall()
+        # print(f"This is the result: {result}")
 
-            if result == ():
-                flash(f"Este usuario no existe. Favor de registrarse", "error")
-            else:
-                cursor.execute(f"SELECT userhash, usersalt FROM mucuser WHERE userlogin = '{form.data['email']}'")
-                userKey = cursor.fetchall()
-                userhash = userKey[0][0].encode(encoding="utf-8")
-
-                test = verify_password_bcrypt(form.data['password'], userhash)
-                print(test)
-
-                flash(f"Bienvenido", "success")
-                # return redirect(url_for("dashboard", userid=f"{form.email.data}"))
-
-
-            # flash(f"Bienvenido", "success")
-            # print(form.data)
-            # return redirect(url_for("dashboard", userid=f"{form.email.data}"))
+        if result == ():
+            flash(f"Este usuario no existe. Favor de registrarse", "error")
         else:
-            print("denied")
-            flash(f"Credenciales incorrectas", "error")
+            cursor.execute(f"SELECT userhash FROM mucuser WHERE userlogin = '{form.data['email']}'")
+            userKey = cursor.fetchall()
+            userhash = userKey[0][0].encode(encoding="utf-8")
+
+            if verify_password_bcrypt(form.data['password'], userhash):
+                flash(f"Bienvenido", "success")
+                print(f"{request.cookies.get('session')}")
+
+                return redirect(url_for("dashboard", userid=f"{form.email.data}"))
+            else:
+                flash(f"Credenciales incorrectas", "error")
     else:
         pass
         # flash(f"Validación NO exitosa", "error")
@@ -230,24 +235,24 @@ def sign_up():
         cursor.execute(f"SELECT * FROM mucuser WHERE userlogin = '{form.data['email']}'")
         result = cursor.fetchall()
 
+        print(f"titleOptions['Title'][int(form.data['title'])]: {titleOptions['Title'][int(form.data['title'])]}")
+
         if result == ():
             userSalt = bcrypt.gensalt()
             userHash = hash_password_bcrypt(form.data['password'], userSalt)
-
-            userSalt_str = userSalt.decode('utf-8')
             userHash_str = userHash.decode('utf-8')
 
             if db_insert(mysql, f"""
                         INSERT INTO
-                            mucuser (userlogin, userhash, usersalt, firstname, lastName, email, title, specialty)
+                            mucuser (userkind, userlogin, userhash, firstname, lastName, email, title, specialty)
                         SELECT
+                            'Author',
                             '{form.data['email']}',
                             '{userHash_str}',
-                            '{userSalt_str}',
                             '{form.data['name']}',
                             '{form.data['fathersName']} {form.data['mothersName']}',
                             '{form.data['email']}',
-                            '{form.data['title']}',
+                            '{titleOptions['Title'][int(form.data['title'])][1]}',
                             '{form.data['specialty']}'
                         FROM
                             DUAL
@@ -262,6 +267,7 @@ def sign_up():
                             )
                     """):
                     flash(f"Registro exitoso", "success")
+                    return redirect(url_for('login'))
             else:
                 flash(f"Problema para insertar en la base de datos", "error")
         else:
@@ -281,7 +287,7 @@ def dashboard(userid):
 
 @app.route('/dashboard')
 def dashboard():
-    userDashboard = Dashboard(id)
+    userDashboard = Dashboard("Pruebita")
     return render_template("dashboard.html", dashboard=userDashboard)
 
 @app.route("/new_article", methods=["GET", "POST"])

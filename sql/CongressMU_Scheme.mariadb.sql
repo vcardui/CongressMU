@@ -8,7 +8,7 @@
 -- +----------------------------------------------------------------------------+
 -- | Author.......: Vanessa Reteguín <vanessa@reteguin.com>
 -- | First release: April 7th, 2025
--- | Last update..: May 22th, 2025
+-- | Last update..: May 25th, 2025
 -- | WhatIs.......: CongressMU - Scheme
 -- | DBMS.........: MariaDB
 -- +----------------------------------------------------------------------------+
@@ -32,6 +32,7 @@ DROP TABLE IF EXISTS mucuser;
 CREATE TABLE
     mucuser (
         idmucuser INT UNSIGNED NOT NULL AUTO_INCREMENT UNIQUE,
+        userkind ENUM ('Administrator', 'Author', 'Evaluator'),
         --
         userlogin VARCHAR(64) UNIQUE NOT NULL,
         userhash VARCHAR(255) NOT NULL,
@@ -39,10 +40,29 @@ CREATE TABLE
         firstname VARCHAR(64) NOT NULL,
         lastName VARCHAR(64) NOT NULL,
         email VARCHAR(128) NOT NULL,
-        title ENUM ('Lic.', 'Ing.', 'Arq.', 'Mtr.', 'Phd.'),
+        title ENUM ('', 'Lic.', 'Ing.', 'Mtr.', 'Phd.'),
         specialty VARCHAR(64),
         --
         PRIMARY KEY (idmucuser)
+    ) ENGINE = InnoDB DEFAULT CHARACTER
+SET
+    = utf8;
+
+
+
+-- DROP TABLE IF EXISTS musession;
+CREATE TABLE
+    musession (
+        idmusession INT UNSIGNED NOT NULL AUTO_INCREMENT UNIQUE,
+        idmucuser INT UNSIGNED NOT NULL,
+        sessionnumber VARCHAR(255) UNIQUE NOT NULL,
+        sessioninterval TINYINT,
+        --
+        starttime DATETIME DEFAULT CURRENT_TIMESTAMP,
+        endtime DATETIME,
+        --
+        PRIMARY KEY (idmusession),
+        FOREIGN KEY (idmucuser) REFERENCES mucuser (idmucuser)
     ) ENGINE = InnoDB DEFAULT CHARACTER
 SET
     = utf8;
@@ -54,7 +74,7 @@ CREATE TABLE
     question (
         idquestion INT UNSIGNED NOT NULL AUTO_INCREMENT UNIQUE,
         --
-        phrase VARCHAR(128) NOT NULL,
+        phrase VARCHAR(255) NOT NULL,
         --
         PRIMARY KEY (idquestion)
     ) ENGINE = InnoDB DEFAULT CHARACTER
