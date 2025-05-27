@@ -35,10 +35,21 @@ VALUES
         'carduibot@gmail.com',
         '$2b$12$rVG1n5bT.o7dJ8JyEnwbK.lCl2F76uwjk5ToGbe8QPOdqPYBJlvFG',
         'Cardui',
-        'Bot',
+        'Bot Gmail',
         'carduibot@gmail.com',
-        '',
-        '11111101000'
+        'Phd.',
+        'gmail 11111101000'
+    ),
+    (
+        3,
+        'Author',
+        'carduibot@yahoo.com',
+        '$2b$12$VQkGBvV12XmV4FLc/Qj8i./cznXRUvQmoZ2y15k1XcspRlr2d/S5O',
+        'Cardui',
+        'Bot Yahoo',
+        'carduibot@yahoo.com',
+        'Lic.',
+        'yahoo 11111101000'
     );
 
 

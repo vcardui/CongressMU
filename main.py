@@ -64,7 +64,14 @@ def get_privileges():
         WHERE
             B.sessionnumber = '{request.cookies.get('session')}'
     """)
-    return privileges.lower()
+    privileges = privileges[0]
+    privileges = privileges[0].lower()
+
+    privileges = 'author'
+
+    print(f"privileges: {privileges}")
+
+    return privileges
 
 # ------------------------- Variables -------------------------
 # Title Options
