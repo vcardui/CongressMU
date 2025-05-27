@@ -8,7 +8,7 @@
 -- +----------------------------------------------------------------------------+
 -- | Author.......: Vanessa Reteguín <vanessa@reteguin.com>
 -- | First release: May 18th, 2025
--- | Last update..: May 25th, 2025
+-- | Last update..: May 26th, 2025
 -- | WhatIs.......: CongressMU - Data
 -- | DBMS.........: MariaDB
 -- +----------------------------------------------------------------------------+
@@ -63,6 +63,50 @@ VALUES
 
 
 
+INSERT INTO
+    musession (idmucuser, sessionnumber)
+SELECT
+    idmucuser,
+    'ThedammnumberYouSillyOMG'
+FROM
+    mucuser
+WHERE
+    userlogin = 'vanessa@reteguin.com';
+
+
+
+UPDATE musession
+SET
+    endtime = '2025-05-26 14:08:37'
+WHERE
+    sessionnumber = 'ThedammnumberYouSilly';
+
+
+
+UPDATE musession
+SET
+    endtime = CURRENT_TIMESTAMP
+WHERE
+    sessionnumber = 'ThedammnumberYouSilly'
+    AND CURRENT_TIMESTAMP <= endtime + INTERVAL 1 HOUR;
+
+
+
+SELECT
+    idmucuser
+FROM
+    musession
+WHERE
+    sessionnumber = '_jW46vM7Dpn3UsYt6TlSV6tc6_cXAbvyW8C0Z8Gw4wE'
+SELECT
+    *
+FROM
+    mucuser
+WHERE
+    idmucuser = 1;
+
+
+
 /*
 
 INSERT INTO
@@ -87,36 +131,3 @@ VALUES
 (1, 1, 0, 'not-accepted', 'May the force be with you'),
 (2, 1, 0, 'accepted-no-modifications', 'Im Marcel Ive got a face and hmm shoes');
  */
-INSERT INTO
-    mucuser (idmusession, idmucuser, sessionnumber, sessioninterval, starttime, endtime)
-VALUES
-    (
-        1,
-        1,
-        'thedammvalue',
-        '$2b$12$lJtFe/6myaEhZRjki9V6/u8mI6pfwBjBDFvGwH4fklZ.b0hKM9ITy',
-        'Vanessa',
-        'Skywalker Amidala',
-        'vanessa@reteguin.com',
-        'Ing.',
-        'Dormir'
-    );
-
-
-
--- DROP TABLE IF EXISTS musession;
-CREATE TABLE
-    musession (
-        idmusession INT UNSIGNED NOT NULL AUTO_INCREMENT UNIQUE,
-        idmucuser INT UNSIGNED NOT NULL,
-        sessionnumber VARCHAR(255) UNIQUE NOT NULL,
-        sessioninterval TINYINT,
-        --
-        starttime DATETIME DEFAULT CURRENT_TIMESTAMP,
-        endtime DATETIME,
-        --
-        PRIMARY KEY (idmusession),
-        FOREIGN KEY (idmucuser) REFERENCES mucuser (idmucuser)
-    ) ENGINE = InnoDB DEFAULT CHARACTER
-SET
-    = utf8;

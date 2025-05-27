@@ -8,7 +8,7 @@
 -- +----------------------------------------------------------------------------+
 -- | Author.......: Vanessa Reteguín <vanessa@reteguin.com>
 -- | First release: April 7th, 2025
--- | Last update..: May 25th, 2025
+-- | Last update..: May 26th, 2025
 -- | WhatIs.......: CongressMU - Scheme
 -- | DBMS.........: MariaDB
 -- +----------------------------------------------------------------------------+

@@ -15,8 +15,7 @@
 # ------------ Resources / Documentation involved -------------
 # Jinja Expressions: https://jinja.palletsprojects.com/en/stable/templates/#jinja-filters.length
 # SweetAlert Js with Flask: https://github.com/elijahondiek/SweetAlert-Js-with-Flask
-# How to connect Python programs to MariaDB: https://mariadb.com/resources/blog/how-to-connect-python-programs-to-mariadb/
-# Flask with MariaDB: A Comprehensive Guide: https://readmedium.com/flask-with-mariadb-a-comprehensive-guide-0be504b0970f
+
 # How to use Flask-Session in Python Flask: https://www.geeksforgeeks.org/how-to-use-flask-session-in-python-flask/
 
 # ------------------------- Libraries -------------------------
@@ -25,10 +24,6 @@ from flask import Flask, render_template, flash, redirect, url_for, request, ses
 from flask_bootstrap import Bootstrap5
 from flask_session import Session
 
-# Integrate MariaDB to app
-import MySQLdb
-import mariadb
-
 # Hashing
 import bcrypt
 
@@ -36,12 +31,17 @@ import bcrypt
 from form import LogInForm, SignUpForm, NewArticleForm, EvaluationForm, FinalEvaluationForm
 from dashboard import Dashboard
 
+# Database
+import database
 
 # ------------------------- App configuration -------------------------
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '8BYkEfBA6O6donzWlSihBXox7C0sKR6b'
 Bootstrap5(app)
+
+# ----------------------- db ------------------------
+# db = database.MariaDB()
 
 # ----------------------- Flask sessions ------------------------
 
@@ -167,33 +167,6 @@ def hash_password_bcrypt(password, salt):
 def verify_password_bcrypt(entered_password, stored_hash):
     return bcrypt.checkpw(entered_password.encode('utf-8'), stored_hash)
 
-# ----------------------- Database ------------------------
-# Database configuration
-app.config['MYSQL_HOST'] = 'localhost'
-app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = '97cb42K3a8yef!ds)/6#)VQV'
-app.config['MYSQL_DB'] = 'flask_db'
-
-# Initialize MySQL
-mysql = MySQLdb.connect(host=app.config['MYSQL_HOST'],
-                        user=app.config['MYSQL_USER'],
-                        passwd=app.config['MYSQL_PASSWORD'],
-                        db=app.config['MYSQL_DB'])
-
-cursor = mysql.cursor()
-
-# cursor.execute("SHOW TABLES")
-# result = cursor.fetchall()
-# print(result)
-
-def db_insert(mysql, insertCmd):
-    try:
-        cursor.execute(insertCmd)
-        mysql.commit()
-        return True
-    except Exception as e:
-        print("Problem inserting into db: " + str(e))
-        return False
 
 # ----------------------- Flask routes ------------------------
 @app.route("/")
@@ -204,22 +177,35 @@ def home():
 def login():
     form = LogInForm()
     if form.validate_on_submit():
-        cursor.execute(f"SELECT * FROM mucuser WHERE userlogin = '{form.data['email']}'")
-        result = cursor.fetchall()
+        result = db.select(f"SELECT * FROM mucuser WHERE userlogin = '{form.data['email']}'")
+        
         # print(f"This is the result: {result}")
 
         if result == ():
             flash(f"Este usuario no existe. Favor de registrarse", "error")
         else:
-            cursor.execute(f"SELECT userhash FROM mucuser WHERE userlogin = '{form.data['email']}'")
-            userKey = cursor.fetchall()
-            userhash = userKey[0][0].encode(encoding="utf-8")
+            user_key = db.select(f"SELECT user_hash FROM mucuser WHERE userlogin = '{form.data['email']}'")
+            user_hash = user_key[0][0].encode(encoding="utf-8")
 
-            if verify_password_bcrypt(form.data['password'], userhash):
+            if verify_password_bcrypt(form.data['password'], user_hash):
                 flash(f"Bienvenido", "success")
-                print(f"{request.cookies.get('session')}")
 
-                return redirect(url_for("dashboard", userid=f"{form.email.data}"))
+                user_session = request.cookies.get('session')
+
+                if not db.insert(f"""
+                INSERT INTO
+                    musession (idmucuser, sessionnumber)
+                SELECT
+                    idmucuser,
+                    '{user_session}'
+                FROM
+                    mucuser
+                WHERE
+                    userlogin = '{form.data['email']}';
+                """):
+                    flash(f"Error al crear sesión", "error")
+
+                return redirect(url_for("dashboard"))
             else:
                 flash(f"Credenciales incorrectas", "error")
     else:
@@ -232,23 +218,22 @@ def login():
 def sign_up():
     form = SignUpForm(titleOptions)
     if form.validate_on_submit():
-        cursor.execute(f"SELECT * FROM mucuser WHERE userlogin = '{form.data['email']}'")
-        result = cursor.fetchall()
+        result = db.select(f"SELECT * FROM mucuser WHERE userlogin = '{form.data['email']}'")
 
         print(f"titleOptions['Title'][int(form.data['title'])]: {titleOptions['Title'][int(form.data['title'])]}")
 
         if result == ():
-            userSalt = bcrypt.gensalt()
-            userHash = hash_password_bcrypt(form.data['password'], userSalt)
-            userHash_str = userHash.decode('utf-8')
+            user_salt = bcrypt.gensalt()
+            user_hash = hash_password_bcrypt(form.data['password'], user_salt)
+            user_hash_str = user_hash.decode('utf-8')
 
-            if db_insert(mysql, f"""
+            if db.insert(f"""
                         INSERT INTO
-                            mucuser (userkind, userlogin, userhash, firstname, lastName, email, title, specialty)
+                            mucuser (userkind, userlogin, user_hash, firstname, lastName, email, title, specialty)
                         SELECT
                             'Author',
                             '{form.data['email']}',
-                            '{userHash_str}',
+                            '{user_hash_str}',
                             '{form.data['name']}',
                             '{form.data['fathersName']} {form.data['mothersName']}',
                             '{form.data['email']}',
@@ -277,18 +262,10 @@ def sign_up():
         # return redirect(url_for('sign_up'))
     return render_template('sign_up.html', form=form)
 
-'''
-@app.route('/<userid>')
-def dashboard(userid):
-    userDashboard = Dashboard(id)
-    return render_template("dashboard.html", dashboard=userDashboard)
-    
-'''
-
 @app.route('/dashboard')
 def dashboard():
-    userDashboard = Dashboard("Pruebita")
-    return render_template("dashboard.html", dashboard=userDashboard)
+    user_dashboard = Dashboard(request.cookies.get('session'))
+    return render_template("dashboard.html", dashboard=user_dashboard)
 
 @app.route("/new_article", methods=["GET", "POST"])
 def new_article():

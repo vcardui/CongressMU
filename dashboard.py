@@ -8,7 +8,7 @@
 # +----------------------------------------------------------------------------+
 # | Author.......: Vanessa Reteguín <vanessa@reteguin.com>
 # | First release: May 6th, 2025
-# | Last update..: May 6th, 2025
+# | Last update..: May 26th, 2025
 # | WhatIs.......: Dashboard - Class
 # +----------------------------------------------------------------------------+
 
@@ -20,12 +20,11 @@
 
 # ------------------------- Classes -------------------------
 class Dashboard:
-    def __init__(self, id):
-        self.id = id
+    def __init__(self, session):
+        self.session = session
 
-        self.name = "Manessa"
-        self.fathersName = "Sky"
-        self.mothersName = "Walker"
+        self.idmucuser = ""
+        self.userkind = ""
         self.email = "vanessa@reteguin.com"
         self.password = "aabb$12345678"
         self.titleOptions = 0
