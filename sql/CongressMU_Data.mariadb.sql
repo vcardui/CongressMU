@@ -107,6 +107,27 @@ WHERE
 
 
 
+------
+INSERT INTO
+    musession (idmucuser, sessionnumber)
+SELECT
+    idmucuser,
+    '{user_session}'
+FROM
+    mucuser
+WHERE
+    userlogin = '{form.data[' email ']}'
+    AND NOT EXISTS (
+        SELECT
+            *
+        FROM
+            musession
+        WHERE
+            sessionnumber = '{user_session}'
+    );
+
+
+
 /*
 
 INSERT INTO

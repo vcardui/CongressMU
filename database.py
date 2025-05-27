@@ -17,7 +17,7 @@
 # Flask with MariaDB: A Comprehensive Guide: https://readmedium.com/flask-with-mariadb-a-comprehensive-guide-0be504b0970f
 
 # ------------------------- Libraries -------------------------
-import main
+
 
 # Integrate MariaDB to app
 import MySQLdb
@@ -25,16 +25,12 @@ import MySQLdb
 # ------------------------- Classes -------------------------
 class MariaDB:
     def __init__(self):
-        main.app.config['MYSQL_HOST'] = 'localhost'
-        main.app.config['MYSQL_USER'] = 'root'
-        main.app.config['MYSQL_PASSWORD'] = '97cb42K3a8yef!ds)/6#)VQV'
-        main.app.config['MYSQL_DB'] = 'flask_db'
 
         # Initialize MySQL
-        self.mysql = MySQLdb.connect(host=main.app.config['MYSQL_HOST'],
-                                user=main.app.config['MYSQL_USER'],
-                                passwd=main.app.config['MYSQL_PASSWORD'],
-                                db=main.app.config['MYSQL_DB'])
+        self.mysql = MySQLdb.connect(host='localhost',
+                                user='root',
+                                passwd='97cb42K3a8yef!ds)/6#)VQV',
+                                db='flask_db')
 
         self.cursor = self.mysql.cursor()
 

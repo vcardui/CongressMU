@@ -41,7 +41,7 @@ app.config['SECRET_KEY'] = '8BYkEfBA6O6donzWlSihBXox7C0sKR6b'
 Bootstrap5(app)
 
 # ----------------------- db ------------------------
-# db = database.MariaDB()
+db = database.MariaDB()
 
 # ----------------------- Flask sessions ------------------------
 
@@ -184,7 +184,7 @@ def login():
         if result == ():
             flash(f"Este usuario no existe. Favor de registrarse", "error")
         else:
-            user_key = db.select(f"SELECT user_hash FROM mucuser WHERE userlogin = '{form.data['email']}'")
+            user_key = db.select(f"SELECT userhash FROM mucuser WHERE userlogin = '{form.data['email']}'")
             user_hash = user_key[0][0].encode(encoding="utf-8")
 
             if verify_password_bcrypt(form.data['password'], user_hash):
@@ -201,7 +201,15 @@ def login():
                 FROM
                     mucuser
                 WHERE
-                    userlogin = '{form.data['email']}';
+                    userlogin = '{form.data['email']}'
+                    AND NOT EXISTS (
+                        SELECT
+                            *
+                        FROM
+                            musession
+                        WHERE
+                            sessionnumber = '{user_session}'
+                    )
                 """):
                     flash(f"Error al crear sesión", "error")
 
@@ -229,7 +237,7 @@ def sign_up():
 
             if db.insert(f"""
                         INSERT INTO
-                            mucuser (userkind, userlogin, user_hash, firstname, lastName, email, title, specialty)
+                            mucuser (userkind, userlogin, userhash, firstname, lastName, email, title, specialty)
                         SELECT
                             'Author',
                             '{form.data['email']}',
