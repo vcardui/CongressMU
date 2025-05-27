@@ -20,9 +20,12 @@
 
 # ------------------------- Libraries -------------------------
 # Flask imports
-from flask import Flask, render_template, flash, redirect, url_for, request, session, jsonify
+from flask import Flask, render_template, flash, redirect, url_for, request, abort, session, jsonify
 from flask_bootstrap import Bootstrap5
 from flask_session import Session
+
+# Wraper
+from functools import wraps
 
 # Hashing
 import bcrypt
@@ -50,6 +53,18 @@ app.config["SESSION_TYPE"] = "filesystem"     # Store session data in files
 
 # Start Flask-Session
 Session(app)
+
+def get_privileges():
+    privileges = db.select(f"""
+        SELECT
+            A.userkind
+        FROM
+            mucuser A
+            INNER JOIN musession B ON A.idmucuser = B.idmucuser
+        WHERE
+            B.sessionnumber = '{request.cookies.get('session')}'
+    """)
+    return privileges.lower()
 
 # ------------------------- Variables -------------------------
 # Title Options
@@ -168,10 +183,73 @@ def verify_password_bcrypt(entered_password, stored_hash):
     return bcrypt.checkpw(entered_password.encode('utf-8'), stored_hash)
 
 
+# ----------------------- Flask Wraps (Profiles) ------------------------
+def author(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        #If id is not 1 then return abort with 403 error
+        user_kind = db.select(f"""
+        SELECT
+            A.userkind
+        FROM
+            mucuser A
+        INNER JOIN musession B
+            ON A.idmucuser = B.idmucuser
+        WHERE
+            B.sessionnumber = '{request.cookies}';
+        """)
+        if user_kind not in ('Author', 'Evaluator', 'Administrator'):
+            return abort(403)
+        #Otherwise continue with the route function
+        return f(*args, **kwargs)
+    return decorated_function
+
+def evaluator(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        #If id is not 1 then return abort with 403 error
+        user_kind = db.select(f"""
+        SELECT
+            A.userkind
+        FROM
+            mucuser A
+        INNER JOIN musession B
+            ON A.idmucuser = B.idmucuser
+        WHERE
+            B.sessionnumber = '{request.cookies.get('session')}';
+        """)
+        if user_kind not in ('Evaluator', 'Administrator'):
+            return abort(403)
+        #Otherwise continue with the route function
+        return f(*args, **kwargs)
+    return decorated_function
+
+
+def admin(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        #If id is not 1 then return abort with 403 error
+        user_kind = db.select(f"""
+        SELECT
+            A.userkind
+        FROM
+            mucuser A
+        INNER JOIN musession B
+            ON A.idmucuser = B.idmucuser
+        WHERE
+            B.sessionnumber = '{request.cookies.get('session')}';
+        """)
+        if user_kind != 'Administrator':
+            return abort(403)
+        #Otherwise continue with the route function
+        return f(*args, **kwargs)
+    return decorated_function
+
+
 # ----------------------- Flask routes ------------------------
 @app.route("/")
 def home():
-    return render_template("index.html")
+    return render_template("index.html", user_privileges=get_privileges())
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -220,7 +298,7 @@ def login():
         pass
         # flash(f"Validación NO exitosa", "error")
 
-    return render_template("login.html", form=form)
+    return render_template("login.html", form=form, user_privileges=get_privileges())
 
 @app.route("/signup", methods=["GET", "POST"])
 def sign_up():
@@ -268,13 +346,19 @@ def sign_up():
 
         # return redirect(url_for('home'))
         # return redirect(url_for('sign_up'))
-    return render_template('sign_up.html', form=form)
+    return render_template('sign_up.html', form=form, user_privileges=get_privileges())
 
+@author
+@evaluator
+@admin
 @app.route('/dashboard')
 def dashboard():
     user_dashboard = Dashboard(request.cookies.get('session'))
-    return render_template("dashboard.html", dashboard=user_dashboard)
+    return render_template("dashboard.html", dashboard=user_dashboard, user_privileges=get_privileges())
 
+@author
+@evaluator
+@admin
 @app.route("/new_article", methods=["GET", "POST"])
 def new_article():
     form = NewArticleForm(categoryOptions)
@@ -282,8 +366,9 @@ def new_article():
         flash(f"Registro exitoso", "success")
         print(form.data)
         # return redirect(url_for('dashboard'))
-    return render_template('new_article.html', form=form)
+    return render_template('new_article.html', form=form, user_privileges=get_privileges())
 
+@admin
 @app.route("/evaluation", methods=["GET", "POST"])
 def evaluation():
     form = EvaluationForm(evaluationOptions)
@@ -291,22 +376,25 @@ def evaluation():
         flash(f"Evaluación exitosa", "success")
         print(form.data)
         # return redirect(url_for('dashboard'))
-    return render_template('evaluation.html', form=form)
+    return render_template('evaluation.html', form=form, user_privileges=get_privileges())
 
+@admin
 @app.route("/articles_assignment", methods=["GET", "POST"])
 def articles_assignment():
     if request.method == "POST":
         flash(f"Evaluación exitosa", "success")
         data = request.form
         print(data)
-        return render_template('articles_assignment.html', data=articlesAssignmentDummy, categories=articlesAssignmentCategories)
+        return render_template('articles_assignment.html', data=articlesAssignmentDummy, categories=articlesAssignmentCategories, user_privileges=get_privileges())
     else:
-        return render_template('articles_assignment.html', data=articlesAssignmentDummy, categories=articlesAssignmentCategories)
+        return render_template('articles_assignment.html', data=articlesAssignmentDummy, categories=articlesAssignmentCategories, user_privileges=get_privileges())
 
+@admin
 @app.route("/articles_catalog", methods=["GET", "POST"])
 def articles_catalog():
-    return render_template('articles_catalog.html', data=articlesAssignmentDummy, categories=articlesAssignmentCategories)
+    return render_template('articles_catalog.html', data=articlesAssignmentDummy, categories=articlesAssignmentCategories, user_privileges=get_privileges())
 
+@admin
 @app.route("/final_evaluation", methods=["GET", "POST"])
 def final_evaluation():
     form = FinalEvaluationForm(evaluationOptions)
@@ -314,7 +402,7 @@ def final_evaluation():
         flash(f"Evaluación final exitosa", "success")
         print(form.data)
         # return redirect(url_for('dashboard'))
-    return render_template('final_evaluation.html', form=form, criteria=evaluationOptions["Criteria"], partialEvaluation=FinalEvaluationDummy)
+    return render_template('final_evaluation.html', form=form, criteria=evaluationOptions["Criteria"], partialEvaluation=FinalEvaluationDummy, user_privileges=get_privileges())
 
 
 if __name__ == '__main__':

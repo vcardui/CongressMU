@@ -20,9 +20,12 @@
                                     <img src="static/assets/img/MU_logo.png" width="30" height="30" class="d-inline-block align-top" alt=""> Monsters University </a>
                                 <div class="collapse navbar-collapse" id="navbar-content">
                                     <ul class="navbar-nav mr-auto mb-2 mb-lg-0">
+                                        {% if (user_privileges == 'author') or (user_privileges == 'evaluator') or (user_privileges == 'administrator'): %}
                                         <li class="nav-item">
                                             <a class="nav-link active" aria-current="page" href={{ url_for('dashboard') }}>Dashboard</a>
                                         </li>
+                                        {% endif %}
+                                        {% if user_privileges == 'administrator': %}
                                         <li class="nav-item dropdown">
                                             <a class="nav-link active dropdown-toggle i__gaming" href="#" data-bs-toggle="dropdown" data-bs-auto-close="outside">Administración</a>
                                             <ul class="dropdown-menu shadow">
@@ -34,6 +37,7 @@
                                                 </li>
                                             </ul>
                                         </li>
+                                        {% endif %}
                                     </ul>
                                     <ul class="navbar-nav ms-auto">
                                         <li class="nav-item">

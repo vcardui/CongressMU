@@ -97,13 +97,28 @@ SELECT
 FROM
     musession
 WHERE
-    sessionnumber = '_jW46vM7Dpn3UsYt6TlSV6tc6_cXAbvyW8C0Z8Gw4wE'
+    sessionnumber = '_jW46vM7Dpn3UsYt6TlSV6tc6_cXAbvyW8C0Z8Gw4wE';
+
+
+
 SELECT
     *
 FROM
     mucuser
 WHERE
     idmucuser = 1;
+
+
+
+--
+-- Get user kind
+SELECT
+    A.userkind
+FROM
+    mucuser A
+    INNER JOIN musession B ON A.idmucuser = B.idmucuser
+WHERE
+    B.sessionnumber = '_jW46vM7Dpn3UsYt6TlSV6tc6_cXAbvyW8C0Z8Gw4wE';
 
 
 
@@ -128,27 +143,37 @@ WHERE
 
 
 
-/*
-
-INSERT INTO
-evaluatedquestion (idevaluationquestion, idquestion, score, idpartialevaluation)
-VALUES
-(1, 1, 5, 1),
-(2, 2, 5, 1),
-(3, 3, 5, 1),
-(4, 4, 5, 1),
-(5, 5, 5, 1),
-(6, 1, 4, 2),
-(7, 2, 4, 2),
-(8, 3, 4, 2),
-(9, 4, 4, 2),
-(10, 5, 4, 2);
+SELECT
+    *
+FROM
+    musession
+WHERE
+    sessionnumber = _jW46vM7Dpn3UsYt6TlSV6tc6_cXAbvyW8C0Z8Gw4wE;
 
 
 
-INSERT INTO
-partialevaluation (idpartialevaluation, evaluator, meanscore, resolution, evaluationcomment)
-VALUES
-(1, 1, 0, 'not-accepted', 'May the force be with you'),
-(2, 1, 0, 'accepted-no-modifications', 'Im Marcel Ive got a face and hmm shoes');
- */
+SELECT
+    /*
+    
+    INSERT INTO
+    evaluatedquestion (idevaluationquestion, idquestion, score, idpartialevaluation)
+    VALUES
+    (1, 1, 5, 1),
+    (2, 2, 5, 1),
+    (3, 3, 5, 1),
+    (4, 4, 5, 1),
+    (5, 5, 5, 1),
+    (6, 1, 4, 2),
+    (7, 2, 4, 2),
+    (8, 3, 4, 2),
+    (9, 4, 4, 2),
+    (10, 5, 4, 2);
+    
+    
+    
+    INSERT INTO
+    partialevaluation (idpartialevaluation, evaluator, meanscore, resolution, evaluationcomment)
+    VALUES
+    (1, 1, 0, 'not-accepted', 'May the force be with you'),
+    (2, 1, 0, 'accepted-no-modifications', 'Im Marcel Ive got a face and hmm shoes');
+     */
