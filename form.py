@@ -8,7 +8,7 @@
 # +----------------------------------------------------------------------------+
 # | Author.......: Vanessa Reteguín <vanessa@reteguin.com>
 # | First release: May 2nd, 2025
-# | Last update..: May 18th, 2025
+# | Last update..: May 27th, 2025
 # | WhatIs.......: form - Class
 # +----------------------------------------------------------------------------+
 
@@ -26,6 +26,8 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SelectField, SubmitField, FileField, TextAreaField
 from wtforms.validators import Length, InputRequired, Email, Regexp, EqualTo
+
+from flask_wtf.file import FileField, FileAllowed, FileRequired
 
 # ------------------------- Classes -------------------------
 # pip install email_validator
@@ -127,8 +129,9 @@ class NewArticleForm(FlaskForm):
     category = SelectField('Categoría', coerce=str)
 
     # https://wtforms.readthedocs.io/en/3.0.x/fields/#wtforms.fields.FileField
-    articleFile = FileField('Archivo JOG del artículo (Se cambiará posteriormente este es un demo)', [
-
+    pdf_file = FileField('Artículo en formato pdf', validators=[
+        FileRequired(),
+        # FileAllowed('pdf', 'Cargue únicamente archivos PDF')
     ])
 
     comments = TextAreaField("Comentarios", [

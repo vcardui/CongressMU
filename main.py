@@ -8,7 +8,7 @@
 # +----------------------------------------------------------------------------+
 # | Author.......: Vanessa Reteguín <vanessa@reteguin.com>
 # | First release: May 2nd, 2025
-# | Last update..: May 26th, 2025
+# | Last update..: May 27th, 2025
 # | WhatIs.......: CongressMU - Main
 # +----------------------------------------------------------------------------+
 
@@ -17,10 +17,11 @@
 # SweetAlert Js with Flask: https://github.com/elijahondiek/SweetAlert-Js-with-Flask
 
 # How to use Flask-Session in Python Flask: https://www.geeksforgeeks.org/how-to-use-flask-session-in-python-flask/
+# Return Files with Flask send_file Tutorial: https://pythonprogramming.net/flask-send-file-tutorial/
 
 # ------------------------- Libraries -------------------------
 # Flask imports
-from flask import Flask, render_template, flash, redirect, url_for, request, abort, session, jsonify
+from flask import Flask, render_template, flash, redirect, url_for, request, abort, send_file
 from flask_bootstrap import Bootstrap5
 from flask_session import Session
 
@@ -29,6 +30,10 @@ from functools import wraps
 
 # Hashing
 import bcrypt
+
+# Files
+from werkzeug.utils import secure_filename
+import os
 
 # Cardui classes
 from form import LogInForm, SignUpForm, NewArticleForm, EvaluationForm, FinalEvaluationForm
@@ -50,6 +55,7 @@ db = database.MariaDB()
 
 app.config["SESSION_PERMANENT"] = False       # Sessions expire when the browser is closed
 app.config["SESSION_TYPE"] = "filesystem"     # Store session data in files
+app.config['UPLOAD_FOLDER'] = 'user_uploads'
 
 # Start Flask-Session
 Session(app)
@@ -65,10 +71,14 @@ def get_privileges():
             B.sessionnumber = '{request.cookies.get('session')}'
     """)
 
+    print(f"request.cookies.get('session'): {request.cookies.get('session')}")
+
+    print(f"privileges: {privileges}")
+
     if privileges == ():
         privileges = ''
     else:
-        privileges = privileges[0]
+        privileges = privileges[0][0]
         privileges = privileges.lower()
 
     # privileges = 'author'
@@ -262,6 +272,7 @@ def admin(f):
 def home():
     return render_template("index.html", user_privileges=get_privileges())
 
+
 @app.route("/login", methods=["GET", "POST"])
 def login():
     form = LogInForm()
@@ -297,7 +308,7 @@ def login():
                         FROM
                             musession
                         WHERE
-                            sessionnumber = '{user_session}'
+                            sessionnumber = '{request.cookies.get('session')}'
                     )
                 """):
                     flash(f"Error al crear sesión", "error")
@@ -374,9 +385,53 @@ def dashboard():
 def new_article():
     form = NewArticleForm(categoryOptions)
     if form.validate_on_submit():
-        flash(f"Registro exitoso", "success")
-        print(form.data)
-        # return redirect(url_for('dashboard'))
+        file = form.pdf_file.data
+        filename = secure_filename(file.filename)
+        try:
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+
+            insert_category = ''
+            if int(form.data['category']) == 0:
+                insert_category = 'inclusion'
+            elif int(form.data['category']) == 1:
+                insert_category = 'educational-technology'
+            elif int(form.data['category']) == 2:
+                insert_category = 'school-on-the-cloud'
+
+            if db.insert(f"""
+                            INSERT INTO
+                                mucarticle (
+                                    author,
+                                    title,
+                                    category,
+                                    articleroute,
+                                    submissionComment,
+                                    partialevaluationmean,
+                                    finalevaluation,
+                                    mailsent
+                                )
+                            SELECT
+                                idmucuser,
+                                '{form.data['title']}',
+                                '{insert_category}',
+                                '{filename}',
+                                '{form.data['comments']}',
+                                NULL,
+                                NULL,
+                                FALSE
+                            FROM
+                                musession
+                            WHERE
+                                sessionnumber = '{request.cookies.get('session')}'
+                        """):
+                flash(f"Registro exitoso", "success")
+                return redirect(url_for('dashboard'))
+            else:
+                flash(f"Error al guardar registro", "error")
+
+        except Exception as e:
+            print("Problems when trying to upload file: " + str(e))
+            flash(f"Error al cargar archivo", "error")
     return render_template('new_article.html', form=form, user_privileges=get_privileges())
 
 @admin
@@ -415,6 +470,11 @@ def final_evaluation():
         # return redirect(url_for('dashboard'))
     return render_template('final_evaluation.html', form=form, criteria=evaluationOptions["Criteria"], partialEvaluation=FinalEvaluationDummy, user_privileges=get_privileges())
 
+@app.route('/article/<filename>')
+def view_pdf(filename):
+    pdf_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+    print(pdf_path)
+    return send_file(str(pdf_path), mimetype='application/pdf')
 
 if __name__ == '__main__':
     app.run(debug=True)

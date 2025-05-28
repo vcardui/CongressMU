@@ -8,7 +8,7 @@
 -- +----------------------------------------------------------------------------+
 -- | Author.......: Vanessa Reteguín <vanessa@reteguin.com>
 -- | First release: April 7th, 2025
--- | Last update..: May 26th, 2025
+-- | Last update..: May 27th, 2025
 -- | WhatIs.......: CongressMU - Scheme
 -- | DBMS.........: MariaDB
 -- +----------------------------------------------------------------------------+
@@ -17,12 +17,12 @@
 --
 /*
 DROP TABLE IF EXISTS mucpartialevaluationarticle;
-DROP TABLE IF EXISTS mucuserarticle;
 DROP TABLE IF EXISTS mucarticle;
 DROP TABLE IF EXISTS partialevaluationquestion;
 DROP TABLE IF EXISTS partialevaluation;
 DROP TABLE IF EXISTS evaluationquestion;
 DROP TABLE IF EXISTS question;
+DROP TABLE IF EXISTS musession;
 DROP TABLE IF EXISTS mucuser;
  */
 --
@@ -106,14 +106,14 @@ CREATE TABLE
         --
         evaluator INT UNSIGNED NOT NULL,
         --
-        meanscore FLOAT DEFAULT 0,
+        meanscore FLOAT DEFAULT NULL,
         resolution ENUM (
             'accepted-no-modifications',
             'accepted-basic-modifications',
             'accepted-structural-modifications',
             'rewrite-content',
             'not-accepted'
-        ) NOT NULL,
+        ),
         evaluationcomment VARCHAR(128),
         --
         PRIMARY KEY (idpartialevaluation),
@@ -151,7 +151,6 @@ CREATE TABLE
         articleroute VARCHAR(128) NOT NULL,
         submissionComment VARCHAR(255),
         --
-        idpartialevaluation INT UNSIGNED NOT NULL,
         partialevaluationmean FLOAT DEFAULT 0,
         finalevaluation ENUM (
             'accepted-no-modifications',
@@ -159,29 +158,12 @@ CREATE TABLE
             'accepted-structural-modifications',
             'rewrite-content',
             'not-accepted'
-        ) NOT NULL,
+        ),
         --
         mailsent BOOL NOT NULL DEFAULT 0,
         --
         PRIMARY KEY (idmucarticle),
-        FOREIGN KEY (author) REFERENCES mucuser (idmucuser),
-        FOREIGN KEY (idpartialevaluation) REFERENCES partialevaluation (idpartialevaluation)
-    ) ENGINE = InnoDB DEFAULT CHARACTER
-SET
-    = utf8;
-
-
-
--- DROP TABLE IF EXISTS mucuserarticle;
-CREATE TABLE
-    mucuserarticle (
-        idmucuser INT UNSIGNED NOT NULL,
-        --
-        idmucarticle INT UNSIGNED NOT NULL,
-        --
-        UNIQUE KEY (idmucuser, idmucarticle),
-        FOREIGN KEY (idmucuser) REFERENCES mucuser (idmucuser),
-        FOREIGN KEY (idmucarticle) REFERENCES mucarticle (idmucarticle)
+        FOREIGN KEY (author) REFERENCES mucuser (idmucuser)
     ) ENGINE = InnoDB DEFAULT CHARACTER
 SET
     = utf8;
