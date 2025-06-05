@@ -114,7 +114,7 @@ evaluationOptions = {
 # Articles Assignment Options
 articlesAssignmentCategories = {
     "EvaluatorCategories": [(0, 'Inclusión'), (1, 'Tecnología educativa'), (2, 'Cloud en en la escuela')],
-    "ArticleCategories": [(0, 'Inclusión'), (1, 'Tecnología educativa'), (2, 'Cloud en en la escuela')]
+    "ArticleCategories": [(0, 'Todos'), (1, 'Inclusión'), (2, 'Tecnología educativa'), (3, 'Cloud en en la escuela')]
 }
 
 articlesAssignmentDummy = {
@@ -447,28 +447,65 @@ def evaluation():
 @admin
 @app.route("/articles_assignment", methods=["GET", "POST"])
 def articles_assignment():
+    evaluators = db.select(f"SELECT CONCAT(firstname, lastName), idmucuser FROM mucuser WHERE userkind = 'Evaluator'")
+    articles = db.select(f"SELECT title, idmucarticle FROM mucarticle")
+
     if request.method == "POST":
-        flash(f"Evaluación exitosa", "success")
-        data = request.form
-        print(data)
-        return render_template('articles_assignment.html', data=articlesAssignmentDummy, categories=articlesAssignmentCategories, user_privileges=get_privileges())
+        post_data = request.form.to_dict(flat=False)
+        print(f"This is the  request.form.to_dict(flat=False): {post_data}")
+
+        print(f"post_data['category']: {post_data['category']}")
+        try:
+            if post_data['category'][0] == 'Todos':
+                articles = db.select(f"SELECT title, idmucarticle FROM mucarticle")
+            elif post_data['category'][0] == 'Inclusión':
+                articles = db.select(f"SELECT title, idmucarticle FROM mucarticle WHERE category = 'inclusion';")
+            elif post_data['category'][0] == 'Tecnología educativa':
+                articles = db.select(f"SELECT title, idmucarticle FROM mucarticle WHERE category = 'educational-technology';")
+            elif post_data['category'][0] == 'Cloud en en la escuela':
+                articles = db.select(f"SELECT title, idmucarticle FROM mucarticle WHERE category = 'school-on-the-cloud';")
+        except Exception as e:
+            print("Problem post_data['category']: " + str(e))
+
+        # flash(f"Evaluación exitosa", "success")
+        return render_template('articles_assignment.html', evaluatorsdata=evaluators, articlesdata = articles, data=articlesAssignmentDummy, categories=articlesAssignmentCategories, user_privileges=get_privileges())
     else:
-        return render_template('articles_assignment.html', data=articlesAssignmentDummy, categories=articlesAssignmentCategories, user_privileges=get_privileges())
+        return render_template('articles_assignment.html', evaluatorsdata=evaluators, articlesdata = articles, data=articlesAssignmentDummy, categories=articlesAssignmentCategories, user_privileges=get_privileges())
 
 @admin
 @app.route("/articles_catalog", methods=["GET", "POST"])
 def articles_catalog():
-    return render_template('articles_catalog.html', data=articlesAssignmentDummy, categories=articlesAssignmentCategories, user_privileges=get_privileges())
+    articles = db.select(f"""
+        SELECT
+            A.idmucarticle,
+            B.firstname,
+            B.lastName,
+            A.title,
+            A.category,
+            A.submissionComment,
+            A.partialevaluationmean,
+            A.finalevaluation,
+            A.mailsent
+        FROM
+            mucarticle A
+            JOIN mucuser B ON A.author = B.idmucuser;
+    """)
+    for i in articles:
+        print(f"i: {i}")
+    return render_template('articles_catalog.html', data=articles, dummydata=articlesAssignmentDummy,  categories=articlesAssignmentCategories, user_privileges=get_privileges())
 
 @admin
-@app.route("/final_evaluation", methods=["GET", "POST"])
-def final_evaluation():
+@app.route("/<id>", methods=["GET", "POST"])
+def final_evaluation(id):
+    article_evaluation = db.select(f"SELECT title FROM mucarticle WHERE idmucarticle = {id};")
+    print(f"article_evaluation: {article_evaluation[0][0]}")
+
     form = FinalEvaluationForm(evaluationOptions)
     if form.validate_on_submit():
         flash(f"Evaluación final exitosa", "success")
         print(form.data)
         # return redirect(url_for('dashboard'))
-    return render_template('final_evaluation.html', form=form, criteria=evaluationOptions["Criteria"], partialEvaluation=FinalEvaluationDummy, user_privileges=get_privileges())
+    return render_template('final_evaluation.html', form=form, criteria=evaluationOptions["Criteria"], partialEvaluation=FinalEvaluationDummy, s=article_evaluation, user_privileges=get_privileges())
 
 @app.route('/article/<filename>')
 def view_pdf(filename):

@@ -224,8 +224,7 @@ VALUES
 INSERT INTO
     partialevaluation (evaluator, meanscore, resolution, evaluationcomment)
 VALUES
-    ('{id del evaluador}', NULL, NULL, NULL),
-    RETURNING idevaluationquestion;
+    (1, NULL, NULL, NULL) RETURNING idpartialevaluation;
 
 
 
@@ -233,66 +232,76 @@ VALUES
 INSERT INTO
     partialevaluationquestion (idevaluationquestion, idpartialevaluation)
 VALUES
-    ('{id de la pregunt1}', '{id de la evaluación}'),
-    ('{id de la pregunt2}', '{id de la evaluación}'),
-    ('{id de la pregunt3}', '{id de la evaluación}'),
-    ('{id de la pregunt4}', '{id de la evaluación}'),
-    ('{id de la pregunt5}', '{id de la evaluación}');
+    (1, 1),
+    (2, 1),
+    (3, 1),
+    (4, 1),
+    (5, 1);
 
 
 
 ------------------- New Article -------------------
+/*
 INSERT INTO
-    mucarticle (
-        author,
-        title,
-        category,
-        articleroute,
-        submissionComment,
-        partialevaluationmean,
-        finalevaluation,
-        mailsent
-    )
+mucarticle (
+author,
+title,
+category,
+articleroute,
+submissionComment,
+partialevaluationmean,
+finalevaluation,
+mailsent
+)
 SELECT
-    idmucuser,
-    '{title}',
-    'inclusion',
-    'ruta',
-    'comentario',
-    NULL,
-    NULL,
-    FALSE
+idmucuser,
+'{form.data[' title ']}',
+'{insert_category}',
+'{filename}',
+'{form.data[' comments ']}',
+NULL,
+NULL,
+FALSE
 FROM
-    musession
+musession
 WHERE
-    sessionnumber = 'o9DdMq7_WuuEK4smrrD_1catQLo7h2nciamgITbbIOQ';
+sessionnumber = '{request.cookies.get(' session ')}';
+ */
+------------------- Get all articles -------------------
+/*SELECT
+A.idmucarticle,
+B.firstname,
+B.lastName,
+A.title,
+A.category,
+A.submissionComment,
+A.partialevaluationmean,
+A.finalevaluation,
+A.mailsent
+FROM
+mucarticle A
+JOIN mucuser B ON A.author = B.idmucuser;
+ */
+------------------- Get evaluation data -------------------
+SELECT
+    A.idmucarticle,
+    B.firstname,
+    B.lastName,
+    A.title,
+    A.category,
+    A.submissionComment,
+    A.partialevaluationmean,
+    A.finalevaluation,
+    A.mailsent
+FROM
+    mucarticle A
+    JOIN mucuser B ON A.author = B.idmucuser;
 
 
 
--- DROP TABLE IF EXISTS mucarticle;
-CREATE TABLE
-    mucarticle (
-        idmucarticle INT UNSIGNED NOT NULL AUTO_INCREMENT UNIQUE,
-        --
-        author INT UNSIGNED NOT NULL,
-        title VARCHAR(128) NOT NULL,
-        category ENUM ('inclusion', 'educational-technology', 'school-on-the-cloud') NOT NULL,
-        articleroute VARCHAR(128) NOT NULL,
-        submissionComment VARCHAR(255),
-        --
-        partialevaluationmean FLOAT DEFAULT 0,
-        finalevaluation ENUM (
-            'accepted-no-modifications',
-            'accepted-basic-modifications',
-            'accepted-structural-modifications',
-            'rewrite-content',
-            'not-accepted'
-        ),
-        --
-        mailsent BOOL NOT NULL DEFAULT 0,
-        --
-        PRIMARY KEY (idmucarticle),
-        FOREIGN KEY (author) REFERENCES mucuser (idmucuser)
-    ) ENGINE = InnoDB DEFAULT CHARACTER
-SET
-    = utf8;
+SELECT
+    title
+FROM
+    mucarticle
+WHERE
+    idmucarticle = 1;

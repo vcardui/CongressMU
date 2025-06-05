@@ -46,14 +46,20 @@ class Dashboard:
 
         user_articles = db.select(f"""
             SELECT
-                title
+                idmucarticle, title
             FROM
                 mucarticle
             WHERE
                 author = {self.idmucuser};
             """)
 
-        print(f"user_articles: {enumerate(user_articles)}")
+        print(f"user_articles: {user_articles}")
 
-        self.articles = ["Artículo 1", "Artículo 2",  "Artículo 3"]
+        self.articles = []
+        list_of_articles = [list(elem) for elem in user_articles]
+        [self.articles.append(i) for i in list_of_articles]
+
         self.evaluations = ["Evaluación 1", "Evaluación 2", "Evaluación 3"]
+
+    def delete_article(self, articles):
+        print(f"self.articles: {articles}")

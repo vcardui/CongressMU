@@ -18,26 +18,14 @@
                         <div class="card-body text-light">
                             <form id="evaluatorsAssignmentForm" action="{{ url_for('articles_assignment') }}" method="post">
                                 <div class="row">
-                                    <div class="col-sm-6 p-2">
+                                    <div class="col-sm-12 p-2">
                                         <p class="text-center">Cantidad desplegada</p>
-                                        <select class="form-select" aria-label="Default select example">
-                                              <option selected>Todos</option>
-                                              <option value="1">Disponibles</option>
+                                        <select class="form-control" id="displayed_amount" name="displayed_amount">
+                                              <option id="all" name="all" selected>Todos</option>
+                                              <option id="available" name="available">Disponibles</option>
                                         </select>
                                     </div>
-                                    <div class="col-sm-6 p-2">
-                                        <p class="text-center">Categoría</p>
-                                        <select class="form-select">
-                                            {% for i in range(0, categories["EvaluatorCategories"]|length): %}
-                                                {% if i.first%}
-                                            <option selected>{{ categories["EvaluatorCategories"][i][1] }}</option>
-                                                {% else %}
-                                            <option value="1">{{ categories["EvaluatorCategories"][i][1] }}</option>
-                                                {% endif %}
-                                            {% endfor %}
-                                        </select>
-                                    </div>
-                                    <button class="btn btn-primary col-2 mx-2" id="evaluatorSubmitButton" type="submit">Filtrar</button>
+                                    <button class="btn btn-primary col-2 mx-2 disabled" id="evaluatorSubmitButton" type="submit">Filtrar</button>
                                 </div>
                                 <table class="table table-dark table-striped table-hover my-4">
                                     <thead>
@@ -50,13 +38,13 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {% for i in range(0, data["Evaluators"]|length): %}
+                                        {% for i in range(0, evaluatorsdata|length): %}
                                         <tr>
-                                            <th scope="row" class="col-sm-4">{{ data["Evaluators"][i]["name"] }}</th>
-                                            <td class="col-md-2" >{{ data["Evaluators"][i]["id"] }}</td>
-                                            {% for j in range(0, data["Evaluators"][i]["assignedArticles"]|length): %}
+                                            <th scope="row" class="col-sm-4">{{ evaluatorsdata[i][0] }}</th>
+                                            <td class="col-md-2" >{{ evaluatorsdata[i][1] }}</td>
+                                            {% for j in range(0, 3): %}
                                             <td>
-                                                <input type="text" class="form-control col-md-1" id='{{ data["Evaluators"][i]["id"] }}' value='{{ j }}'>
+                                                <input type="text" class="form-control col-md-1" name="test_name" value='ev{{ j }}'>
                                             </td>
                                             {% endfor %}
                                         </tr>
@@ -84,22 +72,18 @@
                                     </div>
                                     <div class="col-sm-6 p-2">
                                         <p class="text-center">Categoría</p>
-                                        <select class="form-select">
+                                        <select class="form-select" id="category" name="category">
                                             {% for i in range(0, categories["ArticleCategories"]|length): %}
-                                                {% if i.first%}
-                                            <option selected>{{ categories["ArticleCategories"][i][1] }}</option>
-                                                {% else %}
-                                            <option value="1">{{ categories["ArticleCategories"][i][1] }}</option>
-                                                {% endif %}
+                                            <option>{{ categories["ArticleCategories"][i][1] }}</option>
                                             {% endfor %}
                                         </select>
                                     </div>
-                                    <button class="btn btn-primary col-2 mx-2" id="articleSubmitButton" type="submit">Filtrar</button>
+                                    <button class="btn btn-primary col-2 mx-2" id="articleSubmitButton" name="articleSubmitButton" type="submit">Filtrar</button>
                                 </div>
                                 <table class="table table-dark table-striped table-hover my-4">
                                     <thead>
                                         <tr>
-                                            <th scope="col">Nombre</th>
+                                            <th scope="col">Título</th>
                                             <th scope="col"># ID</th>
                                             <th scope="col">#1</th>
                                             <th scope="col">#2</th>
@@ -107,13 +91,13 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {% for i in range(0, data["Articles"]|length): %}
+                                        {% for i in range(0, articlesdata|length): %}
                                         <tr>
-                                            <th scope="row" class="col-sm-4">{{ data["Articles"][i]["title"] }}</th>
-                                            <td class="col-md-2" >{{ data["Articles"][i]["id"] }}</td>
-                                            {% for j in range(0, data["Articles"][i]["assignedEvaluators"]|length): %}
+                                            <th scope="row" class="col-sm-4">{{ articlesdata[i][0] }}</th>
+                                            <td class="col-md-2" >{{ articlesdata[i][1] }}</td>
+                                            {% for j in range(0, 3): %}
                                             <td>
-                                                <input type="text" class="form-control col-md-1" id='{{ data["Articles"][i]["id"] }}' value='{{ j }}'>
+                                                <input type="text" class="form-control col-md-1" name="test_name1" value='av{{ j }}'>
                                             </td>
                                             {% endfor %}
                                         </tr>

@@ -10,8 +10,8 @@
             <h1 class="display-4 fw-bold text-body-emphasis text-center pb-3">Evaluación</h1>
             <h2 class="display-6 fw-bold text-body-emphasis text-center pb-0">Título del artículo</h2>
             <div class="row justify-content-center mb-3">
-                <a class="btn btn-primary btn-md rounded-pill m-3 active" style="width: 200px" role="button">Categoría</a>
-                <a class="btn btn-info btn-md rounded-pill m-3" style="width: 200px" href=" {{ '' }} " role="button">Leer artículo</a>
+                <!-- <a class="btn btn-primary btn-md rounded-pill m-3 active" style="width: 200px" role="button">Categoría</a> -->
+                <a class="btn btn-info btn-md rounded-pill m-3" style="width: 200px" href="{{ url_for('view_pdf', filename='test.pdf') }}" role="button">Leer artículo</a>
             </div>
             {{ render_form(form)}}
         </div>
