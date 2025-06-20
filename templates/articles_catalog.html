@@ -39,16 +39,16 @@
                                 <td class="col-md-3" >{{ data[i][3] }}</td>
                                 <td class="col-md-1" ><a href=" {{ url_for('final_evaluation', id=1) }} " class="btn btn-primary">{{ data[i][0] }}</a></td>
                                 <td class="col-md-1" >{{ data[i][4] }}</td>
-                                {% for j in range(0, dummydata[i]["evaluationsGrades"]|length): %}
-                                <td class="col-md-1" >{{ dummydata[i]["evaluationsGrades"][j] }}</td>
+                                {% for j in range(0, data[i]["evaluationsGrades"]|length + 3): %}
+                                <td class="col-md-1" >{{ data[i][0] + i }}</td>
                                 {% endfor %}
-                                <td class="col-md-1" >{{ dummydata[i]["averageGrade"] }}</td>
-                                {% if dummydata[i]["evaluationStatus"] == true %}
+                                <td class="col-md-1" >{{ data[i][0] + i }}</td>
+                                {% if data[i]["evaluationStatus"] == true %}
                                     <td class="col-md-1 text-success no-hover">Aceptado</td>
                                 {% else%}
                                     <td class="col-md-1 text-danger">No aceptado</td>
                                 {% endif %}
-                                {% if dummydata[i]["emailSent"] == true %}
+                                {% if data[i]["emailSent"] == true %}
                                     <td class="col-md-1 text-success no-hover">Enviado</td>
                                 {% else%}
                                     <td class="col-md-1 text-danger">No enviado</td>
